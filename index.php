@@ -1,3 +1,19 @@
+<?php
+
+include("config/session.php");
+
+if (isset($_GET["i"])&&($_GET["i"]==1)) {
+	$msg = "Usuário ou senha inválidos!";
+}else {
+	$msg = "";
+}
+
+if (isset($_SESSION["codProfessor"])){
+	header("Location: login.php"); exit;
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,11 +32,14 @@
  			<div class="title">
  				Bem <span>vindo!</span>
  			</div>
+			<div class="errorMsg">
+				<?=$msg?>
+			</div>
  			<form class="form" id="frmLogin" name="frmLogin" action="login.php" method="post">  
-				<input type="text" placeholder="Login" class="user" id="user" name="user"> 
-				<input type="password" placeholder="Senha" class="password" id="pass" name="pass">
-				<button type="submit" id="login-button" class="button">Login</button>
-		</form>
+				<input type="text" placeholder="Login" class="user" id="user" name="user" required> 
+				<input type="password" placeholder="Senha" class="password" id="pass" name="pass" required>
+				<button type="submit" id="loginButton" name="loginButton" class="button">Login</button>
+			</form>
  		</div>  
  	</div>
 </body>

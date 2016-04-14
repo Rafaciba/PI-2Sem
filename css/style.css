@@ -38,7 +38,18 @@
 	font-weight: 500;
 }
 
-.frmLogin {
+.errorMsg {
+	font-family: 'Roboto', sans-serif;
+	color: #fff;	
+	font-weight: 400;
+	font-size: 18px;
+	text-align: center;
+	margin: 0 auto;
+	padding-top: 10px;
+	width: 300px;
+}
+
+.form {
 	width: 300px;
 	margin: 0 auto; 
 	padding: 10px;
