@@ -2,8 +2,7 @@
 
 include("config/database.php");
 include("config/session.php");
-
-
+include("config/func.php");
 
 if (isset($_POST["loginButton"])){
 
@@ -25,7 +24,7 @@ if (isset($_POST["loginButton"])){
 		$credenciais = odbc_fetch_array($result);//passa o resultado encontrado para um array
 		
 		//passa os valores necessários para as variáveis globais
-		$_SESSION["showMenu"] = FALSE;
+		$_SESSION["showMenu"] = TRUE;
 		$_SESSION["codProfessor"]=$credenciais["codProfessor"];
 		$_SESSION["nomeProfessor"]=$credenciais["nome"];
 		$_SESSION["tipoProfessor"]=$credenciais["tipo"];
@@ -57,6 +56,8 @@ if (isset($_POST["loginButton"])){
 <?php if (isset($_SESSION["showMenu"])&&$_SESSION["showMenu"]) { ?>
 	<center>Bem vindo, <strong><?=$_SESSION["nomeProfessor"]?></strong>! Aqui é o menu! <a href="index.php?logout=1">Fazer Logout</a></center>
 <?php } ?>
+
+<p><a href="questao.php">Questões</a></p>
 </body>
 
 </html>
