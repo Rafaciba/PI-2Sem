@@ -9,6 +9,31 @@ if(!isset($_SESSION["codProfessor"])){
 	header("Location: index.php"); exit;	
 }
 
+if (isset($_GET[p])) {
+	$p = $_GET[p];
+}else {
+	$p = 1;	
+}
+
+if (isset($_GET[pp])) {
+	$pp = $_GET[pp];
+}else{
+	$pp = 20;
+}
+
+if (isset($_GET[ordem])) {
+	$ordem = $_GET[ordem];
+}else{
+	$ordem = "codQuestao";
+}
+
+if (isset($_GET[busca])) {
+	$busca = $_GET[busca];
+	$buscaQuery = "WHERE textoQuestao LIKE '%$busca%' OR assunto LIKE '%$busca%' OR tipoquestao LIKE '%$busca%' OR nome LIKE '%$busca%' OR dificuldade LIKE '%$busca%'";
+}else{
+	$buscaQuery = "";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -32,14 +57,13 @@ if(!isset($_SESSION["codProfessor"])){
 </section>
 <section>
 	<?php 
-		$p = "0";
-		$pp = "20";
 		$query = "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
 		FROM questao q 
 		INNER JOIN assunto a ON q.codAssunto = a.codAssunto
 		JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-		JOIN professor p ON q.codProfessor = p.codProfessor
-		ORDER BY codQuestao OFFSET $p ROWS FETCH NEXT (($p+1) *$pp) ROWS ONLY";
+		JOIN professor p ON q.codProfessor = p.codProfessor 
+		$buscaQuery 
+		ORDER BY $ordem OFFSET ($p-1) ROWS FETCH NEXT ($p * $pp) ROWS ONLY";
 		//$query = "SELECT * FROM questao WHERE ativo = '1' ORDER BY codQuestao OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY";
 		//SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao, tq.descricao FROM questao q INNER JOIN assunto a ON q.codAssunto = a.codAssunto
 		//JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao 
@@ -52,7 +76,7 @@ if(!isset($_SESSION["codProfessor"])){
 	<?php
 			}
 		} else {
-			echo "Não existem questões cadastradas!";
+			echo "Nenhuma questão foi encontrada!";
 		}
 	?>
 </section>

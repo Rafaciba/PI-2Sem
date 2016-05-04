@@ -27,13 +27,12 @@ if (isset($_POST['cadastrar'])){
 			
 			//CONVERT(varbinary(max),'$fileParaDB')
 			$stmt = odbc_prepare($conn,'INSERT INTO imagem (tituloImagem,bitmapImagem) VALUES (?,?)');
-			$result = odbc_execute($stmt,array('Teste Imagem 5', $fileParaDB));
+			$resultI = odbc_execute($stmt,array('Teste Imagem 5', $fileParaDB));
 			//$query = "INSERT INTO imagem (tituloImagem,bitmapImagem) VALUES ('".$_POST['titImagem']."',CONVERT(varbinary(max),'$aux'))";
 			//$result = odbc_exec($conn,$query) or die(odbc_errormsg($conn));
-			if ($result) {
+			if ($resultI) {
 				$stmt = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
 								VALUES (?,?,IDENT_CURRENT('IMAGEM'),?,?,1,?)");
-				$result = odbc_execute($stmt,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
 			}
 		}else{
 			if($_FILES['imagemQuestao']['size'] > 9000000){
@@ -49,16 +48,17 @@ if (isset($_POST['cadastrar'])){
 	}else{
 		$stmt = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
 								VALUES (?,?,NULL,?,?,1,?)");
-		$result = odbc_execute($stmt,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
 	}
 	//QUESTAO
-	/*$stmt = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
-								VALUES (?,?,IDENT_CURRENT('IMAGEM'),?,?,1,?)");
-	$result = odbc_execute($stmt,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
-	/*$query = "INSERT INTO Questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
-	VALUES ('".$_POST['textoQuestao']."','".$_POST['assunto']."','$idImagem','".$_POST['tipoQuestao']."','".$_SESSION['codProfessor']."','".$_POST['ativo']."','".$_POST['dificuldade']."')";
-	$result = odbc_exec($conn,$query);
-	print_r($result);*/
+	$resultQ = odbc_execute($stmt,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
+	
+	if ($resultQ) {
+		for ($i=1;$i<=$_POST['qtdAlternativas'];$i++) {
+			$stmt = odbc_prepare($conn,"INSERT INTO alternativa (codQuestao, codAlternativa,textoAlternativa,correta)
+										VALUES (IDENT_CURRENT('QUESTAO'),?,?,?)");
+			$result = odbc_execute($stmt, array($i,$_POST['textoAlternativa_'.$i],$_POST['correta_'.$i]));
+		}
+	}
 }
 
 ?>
