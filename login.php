@@ -55,9 +55,10 @@ if (isset($_POST["loginButton"])){
 <body>
 <?php if (isset($_SESSION["showMenu"])&&$_SESSION["showMenu"]) { ?>
 	<center>Bem vindo, <strong><?=$_SESSION["nomeProfessor"]?></strong>! Aqui é o menu! <a href="index.php?logout=1">Fazer Logout</a></center>
+	<p><a href="questao.php">Questões</a></p>
 <?php } ?>
 
-<p><a href="questao.php">Questões</a></p>
+
 </body>
 
 </html>
