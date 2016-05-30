@@ -9,7 +9,7 @@ if (isset($_GET["i"])&&($_GET["i"]==1)) {
 }
 
 if (isset($_SESSION["codProfessor"])){
-	header("Location: login.php"); exit;
+	header("Location: questao.php"); exit;
 }
 
 ?>

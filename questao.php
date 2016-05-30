@@ -47,7 +47,7 @@ if (isset($_GET['p'])) {
 if (isset($_GET['pp'])) {
 	$pp = $_GET['pp'];
 }else{
-	$pp = 100;
+	$pp = 250;
 }
 
 if (isset($_GET['ordem'])) {
@@ -108,11 +108,32 @@ if (isset($_GET['busca'])) {
 					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
 					JOIN professor p ON q.codProfessor = p.codProfessor 
 					$buscaQuery 
-					ORDER BY $ordem OFFSET ($p-1) ROWS FETCH NEXT ($p * $pp) ROWS ONLY";
+					ORDER BY q.codQuestao DESC OFFSET ($p-1) ROWS FETCH NEXT ($p * $pp) ROWS ONLY";
 					$result = odbc_exec($conn,$query);
+					/*$stmt = odbc_prepare($conn, "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
+					FROM questao q 
+					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
+					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
+					JOIN professor p ON q.codProfessor = p.codProfessor
+					ORDER BY codQuestao OFFSET (?-1) ROWS FETCH NEXT (? * ?) ROWS ONLY");
+					$result = odbc_execute($stmt, array($p, $p, $pp));
+					odbc_errormsg($conn);
+					print_r(odbc_fetch_array($stmt));*/
 					if(odbc_num_rows($result)>0){
 				?>
 			    <thead>
+				  
+					<?php
+					if (isset($_GET['d'])){
+						echo '<tr><th colspan="7">';
+						if($_GET['d']==1){
+							echo "Questão deletada/desativada com sucesso!";
+						}else{
+							echo "Erro ao tentar deletar/desativar a questão.";
+						}
+						echo '</th></tr>';
+					}
+					?>
 			      <tr> 
 			        <th scope="col">Editar Questão</th>
 			        <th scope="col">Enunciado</th>
@@ -131,10 +152,8 @@ if (isset($_GET['busca'])) {
 				  ?>
 			      <tr> 
 			        <td data-title="">
-						<a href="update.php?cq=<?=$area["codQuestao"]?>" class="edit">							
-						</a>
-						<a href="#" class="delete">						
-						</a>
+						<a href="update.php?cq=<?=$area["codQuestao"]?>" class="edit"></a>
+						<a href="delete.php?cq=<?=$area["codQuestao"]?>" class="delete"></a>
 			        </td>
 			        <td data-title=""><?=utf8_encode($area["textoQuestao"])?></td>
 			        <td data-title=""><?=utf8_encode($area["assunto"])?></td>

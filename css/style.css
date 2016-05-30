@@ -396,7 +396,7 @@ label {
   -webkit-transform: translateY(6px);
           transform: translateY(6px);
   left: 13px;
-  color: #000;
+  color: #fff;
   -webkit-transition: all 0.25s ease;
   transition: all 0.25s ease;
   -webkit-backface-visibility: hidden;
@@ -426,7 +426,7 @@ label {
   font-size: 16px;
   font-weight: 300;
   display: block;
-  width: 100%;
+  width: 90%;
   height: 100%;
   padding: 5px 10px;
   background-color: #fff;
@@ -440,6 +440,7 @@ label {
 input:focus, textarea:focus {
   outline: 0;
   border-color: #00bbd4;
+  color: #fff;
 }
 
 input[type=checkbox], input[type=radio] {
@@ -472,6 +473,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .button-cadastrar {
+  background: #385965;
   border: 1px solid #385965;
   outline: none; 
   padding: 15px 0;
@@ -479,16 +481,18 @@ input[type=checkbox], input[type=radio] {
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: .1em; 
-  color: #385965;
+  color: #fff;
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
   -webkit-appearance: none;
   text-decoration: none;
   text-align: center;
+  cursor: pointer;
 }
 .button-cadastrar:hover, .button-cadastrar:focus {
-  background-color: #00bbd4; 
-  color: #fff;
+  background-color: #fff; 
+  border: 1px solid #385965;
+  color: #385965;
 }
 
 .button-block {
@@ -497,6 +501,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .button-cancelar {
+  background-color: #ff5335;
   border: 1px solid #ff5335;
   outline: none; 
   padding: 15px 0;
@@ -504,7 +509,7 @@ input[type=checkbox], input[type=radio] {
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: .1em; 
-  color: #ff5335;
+  color: #fff;
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
   -webkit-appearance: none;
@@ -513,6 +518,77 @@ input[type=checkbox], input[type=radio] {
   margin-left: 10px;
 }
 .button-cancelar:hover, .button-cancelar:focus {
-  background-color: #ff5335;
+  background-color: #fff;
+  border: 1px solid #ff5335;
+  color: #ff5335; 
+}
+
+
+.img-up img {
+  max-width: 600px;
+}
+
+#addAlternativa {
+  background-color: #fff;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+  color: #7c8c88;
+  font-size: 31px;
+  outline: 0;
+  border: 2px solid #7c8c88;
+  border-radius: 50%;
+  padding: 0 8px;
+  cursor: pointer;
+  text-align: center; 
+}
+
+ 
+#addAlternativa:hover {
+  background-color: #7c8c88;
+  border: 2px solid #7c8c88;
   color: #fff;
 }
+
+#rmvAlternativa {
+  background-color: #b7c3c0;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+  color: #fff;
+  outline: 0;
+  border: 1px solid #fff;
+  padding: 10px;
+  cursor: pointer; 
+}
+
+
+#alternativas h4 {
+  font-weight: 500;
+}
+
+#input-alt {
+  display: inline-block;
+  width: 400px;
+}
+
+#input-alt h5 {
+  font-weight: 400;
+  font-size: 16px;
+}
+
+#input-corret {
+  width: 150px;
+  display: inline-block;
+  margin-left: 20px;
+  vertical-align: top;
+}
+
+#input-corret h5 {
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.add {
+  margin-top: 20px;
+} 

@@ -4,11 +4,11 @@ include("config/database.php");
 include("config/session.php");
 include("config/func.php");
 
-if(!isset($_SESSION["codProfessor"])&&!isset($_GET['cq'])){
+if(!isset($_SESSION['codProfessor'])&&!isset($_GET['cq'])){
 	header("Location: index.php"); exit;	
 }
 
-$codQuestao = $_GET['cq'];
+$codQuestao = preg_replace("/[^0-9]/", "", $_GET['cq']);
 
 if (isset($_POST['cadastrar'])){
 	//IMAGEM
@@ -21,11 +21,14 @@ if (isset($_POST['cadastrar'])){
 			$fileParaDB = fread($file, filesize($_FILES['imagemQuestao']['tmp_name']));
 			fclose($file);
 			
-			$stmt = odbc_prepare($conn,'INSERT INTO imagem (tituloImagem,bitmapImagem) VALUES (?,?)');
+			$stmt = odbc_prepare($conn,'INSERT INTO imagem (tituloImagem,bitmapImagem) OUTPUT INSERTED.codImagem VALUES (?,?)');
 			$resultI = odbc_execute($stmt,array($_POST['titImagem'], $fileParaDB));
 			
 			if ($resultI) {
-				$stmt = odbc_prepare($conn,"UPDATE questao SET textoQuestao=?, codAssunto=?, codImagem=IDENT_CURRENT('IMAGEM'), codTipoQuestao=?, dificuldade=? WHERE codQuestao = ?");
+				//QUESTAO
+				$insertImg = odbc_fetch_array($stmt);
+				$stmtQ = odbc_prepare($conn,"UPDATE questao SET textoQuestao=?, codAssunto=?, codImagem=?, codTipoQuestao=?, dificuldade=? WHERE codQuestao = ?");
+				$resultQ = odbc_execute($stmtQ,array($_POST['textoQuestao'],$_POST['assunto'],$insertImg['codImagem'],$_POST['tipoQuestao'],$_POST['dificuldade'],$codQuestao));
 			}
 		}else{
 			if($_FILES['imagemQuestao']['size'] > 9000000){
@@ -38,16 +41,16 @@ if (isset($_POST['cadastrar'])){
 			}
 		}
 	}else{
-		$stmt = odbc_prepare($conn,"UPDATE questao SET textoQuestao=?, codAssunto=?, codTipoQuestao=?, dificuldade=? WHERE codQuestao = ?");
+		//QUESTAO
+		$stmtQ = odbc_prepare($conn,"UPDATE questao SET textoQuestao=?, codAssunto=?, codTipoQuestao=?, dificuldade=? WHERE codQuestao = ?");
+		$resultQ = odbc_execute($stmtQ,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_POST['dificuldade'],$codQuestao));
 	}
-	//QUESTAO
-	$resultQ = odbc_execute($stmt,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_POST['dificuldade'],$codQuestao));
-	
+	//ALTERNATIVAS
 	if ($resultQ) {
-		$stmt = odbc_prepare($conn, "SELECT codAlternativa FROM alternativa WHERE codQuestao = ?");
-		$resultA = odbc_execute($stmt, array($codQuestao));
+		$stmtA = odbc_prepare($conn, "SELECT codAlternativa FROM alternativa WHERE codQuestao = ?");
+		$resultA = odbc_execute($stmtA, array($codQuestao));
 		
-		$qtdAlt = odbc_num_rows($resultA);
+		$qtdAlt = odbc_num_rows($stmtA);
 		
 		if ($qtdAlt <= $_POST['qtdAlternativas']) {
 			for ($i=1;$i<=$qtdAlt;$i++) {
@@ -68,17 +71,17 @@ if (isset($_POST['cadastrar'])){
 			}
 			for ($i=$qtdAlt+1;$i<=$_POST['qtdAlternativas'];$i++) {
 				$stmt = odbc_prepare($conn,"INSERT INTO alternativa (codQuestao, codAlternativa,textoAlternativa,correta)
-											VALUES (IDENT_CURRENT('QUESTAO'),?,?,?)");
+											VALUES (?,?,?,?)");
 				if (!isset($_POST['correta_'.$i])){$correta=0;}else{$correta=$_POST['correta_'.$i];}
 				switch($_POST['tipoQuestao']){
 					case "A": 
-						$arr = array($i,$_POST['alternativa_'.$i],$correta);
+						$arr = array($codQuestao,$i,$_POST['alternativa_'.$i],$correta);
 						break;
 					case "T": 
-						$arr = array($i,$_POST['resposta_'.$i],1);
+						$arr = array($codQuestao,$i,$_POST['resposta_'.$i],1);
 						break;
 					case "V": 
-						$arr = array($i,$_POST['respostaVF'],$_POST['correta']);
+						$arr = array($codQuestao,$i,$_POST['respostaVF'],$_POST['correta']);
 						break;
 				}
 				$result = odbc_execute($stmt, $arr);
@@ -102,7 +105,7 @@ if (isset($_POST['cadastrar'])){
 				$result = odbc_execute($stmt, $arr);
 			}
 			for ($i=$_POST['qtdAlternativas']+1;$i<=$qtdAlt;$i++) {
-				$stmt = odbc_prepare($conn,"DELETER FROM alternativa WHERE codQuestao = ? AND codAlternativa = ?");
+				$stmt = odbc_prepare($conn,"DELETE FROM alternativa WHERE codQuestao = ? AND codAlternativa = ?");
 				$result = odbc_execute($stmt, array($codQuestao,$i));
 			}
 		}
@@ -149,14 +152,29 @@ if (isset($_POST['cadastrar'])){
 
 	          <br><br>
               <?php
-              	$query = "SELECT q.codQuestao, q.textoQuestao, q.dificuldade, q.codAssunto, q.codTipoQuestao, a.descricao AS assunto, tq.descricao AS tipoquestao, i.tituloImagem, i.bitmapImagem
+              	/*$query = "SELECT q.codQuestao, q.textoQuestao, q.dificuldade, q.codAssunto, q.codTipoQuestao, 
+					a.descricao AS assunto, 
+					tq.descricao AS tipoquestao, 
+					i.tituloImagem, i.bitmapImagem
 					FROM questao q 
 					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
 					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
 					LEFT JOIN imagem i ON q.codImagem = i.codImagem
 					WHERE q.codQuestao = $codQuestao";
-				$resultado = odbc_exec($conn, $query);
-				$questao = odbc_fetch_array($resultado);
+				$resultado = odbc_exec($conn, $query);*/
+				$stmt = odbc_prepare($conn,"SELECT q.codQuestao, q.textoQuestao, q.dificuldade, q.codAssunto, q.codTipoQuestao, 
+					a.descricao AS assunto, 
+					tq.descricao AS tipoquestao, 
+					i.tituloImagem, i.bitmapImagem
+					FROM questao q 
+					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
+					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
+					LEFT JOIN imagem i ON q.codImagem = i.codImagem
+					WHERE q.codQuestao = ?");
+				$resultado = odbc_execute($stmt, array($codQuestao));
+				odbc_binmode ($stmt, ODBC_BINMODE_RETURN);
+				odbc_longreadlen ($stmt, 9000000);//ini_set ('odbc.defaultlrl', 9000000);
+				$questao = odbc_fetch_array($stmt);
 			  ?>
 	          
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
@@ -164,14 +182,15 @@ if (isset($_POST['cadastrar'])){
 						  <label>Enunciado</label>
 						  <input type="text" name="textoQuestao" id="textoQuestao" maxlength="300" size="90" value="<?=utf8_encode($questao['textoQuestao'])?>">
 					</div>
+					
 					<div class="field-wrap">
 						<label>Assunto:</label>
 						<select name="assunto">
 							<?php
-								$query = "SELECT codAssunto, descricao FROM assunto ORDER BY descricao ASC";
-								$result = odbc_exec($conn,$query);
-								if(odbc_num_rows($result)>0){
-									while($assunto = odbc_fetch_array($result)){
+								$queryA = "SELECT codAssunto, descricao FROM assunto ORDER BY descricao ASC";
+								$resultAs = odbc_exec($conn,$queryA);
+								if(odbc_num_rows($resultAs)>0){
+									while($assunto = odbc_fetch_array($resultAs)){
 										if ($questao['codAssunto']==$assunto['codAssunto']) {
 											echo '<option value="'.$assunto['codAssunto'].'" selected>'.utf8_encode($assunto['descricao']).'</option>';
 										}else{
@@ -186,10 +205,10 @@ if (isset($_POST['cadastrar'])){
 						<label>Tipo:</label>
 						<select name="tipoQuestao" id="tipoQuestao">
 							<?php
-								$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao ASC";
-								$result = odbc_exec($conn,$query);
-								if(odbc_num_rows($result)>0){
-									while($tipoQuestao = odbc_fetch_array($result)){
+								$queryT = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao ASC";
+								$resultT = odbc_exec($conn,$queryT);
+								if(odbc_num_rows($resultT)>0){
+									while($tipoQuestao = odbc_fetch_array($resultT)){
 										if ($questao['codTipoQuestao']==$tipoQuestao['codTipoQuestao']) {
 											echo '<option value="'.$tipoQuestao['codTipoQuestao'].'" selected>'.utf8_encode($tipoQuestao['descricao']).'</option>';
 										}else{
@@ -209,14 +228,14 @@ if (isset($_POST['cadastrar'])){
 						</select>
 					</div>
 					<div class="field-wrap">
-						<label>Alterar Imagem:</label> 
-						<input type="file" name="imagemQuestao"><br>
 						<label>T&iacute;tulo da imagem:</label>
 						<input type="text" name="titImagem" maxlength="50" size="50" value="<?=$questao['tituloImagem']?>"><br>
-						<div><img src="data:image/jpeg;base64,<?=base64_encode($questao['bitmapImagem'])?>"></div>
+						<div><img class="img-up" src="data:image/jpeg;base64,<?=base64_encode($questao['bitmapImagem'])?>"></div>
+						<label>Alterar Imagem:</label> 
+						<input type="file" name="imagemQuestao"><br>
 					</div>
 					<?php
-						$resultA = odbc_exec($conn, "SELECT codAlternativa FROM alternativa WHERE codQuestao = $codQuestao");
+						$resultA = odbc_exec($conn, "SELECT * FROM alternativa WHERE codQuestao = $codQuestao");
 		
 						$qtdAlt = odbc_num_rows($resultA);
 					?>
@@ -238,8 +257,8 @@ if (isset($_POST['cadastrar'])){
 							?>
 							<tr>
 								<td><?=$j?></td>
-								<td><input type="text" name="alternativa_<?=$j?>" maxlength="250" size="80"></td>
-								<td><input type="checkbox" name="correta_<?=$j?>" value="1"></td>
+								<td><input type="text" name="alternativa_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>"></td>
+								<td><input type="checkbox" name="correta_<?=$j?>" value="1" <?=($alternativa['correta']==1)?"checked":""?>></td>
 							</tr>
 							<?php } ?>
 						</table>
@@ -262,7 +281,7 @@ if (isset($_POST['cadastrar'])){
 							?>
 							<tr>
 								<td><?=$j?></td>
-								<td><input type="text" name="resposta_<?=$j?>" maxlength="250" size="80"></td>
+								<td><input type="text" name="resposta_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>"></td>
 							</tr>
 							<?php } ?>
 						</table>
@@ -271,23 +290,23 @@ if (isset($_POST['cadastrar'])){
 							<button id="rmvResposta" name="rmvResposta">Remover resposta</button>
 						</div>
 					</div>
-					<?php }else if($questao['codTipoQuestao']=='V') { ?>
+					<?php }else if($questao['codTipoQuestao']=='V') { 
+						$alternativa = odbc_fetch_array($resultA);
+					?>
 					<div id="verdadeiroFalso">
 						<h4>Resposta</h4>
-						Texto da resposta: <input type="text" name="respostaVF" maxlength="250" size="80"><br>
-						Verdadeira: <input type="radio" name="correta" value="1">
-						Falsa: <input type="radio" name="correta" value="0">
+						Texto da resposta: <input type="text" name="respostaVF" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>"><br>
+						Verdadeira: <input type="radio" name="correta" value="1" <?=($alternativa['correta']==1)?"checked":""?>>
+						Falsa: <input type="radio" name="correta" value="0" <?=($alternativa['correta']==0)?"checked":""?>>
 					</div>
 					<?php } ?>
 					<br><br>
-					<input type="submit" value="Cadastrar" name="cadastrar" class="button-cadastrar button-block">
+					<input type="submit" value="Salvar" name="cadastrar" class="button-cadastrar button-block">
 					<a href="questao.php" class="button-cancelar button-block"/>Cancelar</a>
 				</form>
-
 	        </div>
 	        
-	        <div id="login">   
-	          
+	        <div id="login">
 	        </div>
 	        
 	     </div>

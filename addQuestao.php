@@ -26,13 +26,14 @@ if (isset($_POST['cadastrar'])){
 			//echo $fileParaDB;
 			
 			//CONVERT(varbinary(max),'$fileParaDB')
-			$stmt = odbc_prepare($conn,'INSERT INTO imagem (tituloImagem,bitmapImagem) VALUES (?,?)');
-			$resultI = odbc_execute($stmt,array('Teste Imagem 5', $fileParaDB));
+			$stmt = odbc_prepare($conn,'INSERT INTO imagem (tituloImagem,bitmapImagem) OUTPUT INSERTED.codImagem VALUES (?,?)');
+			$resultI = odbc_execute($stmt,array($_POST['titImagem'], $fileParaDB));
 			//$query = "INSERT INTO imagem (tituloImagem,bitmapImagem) VALUES ('".$_POST['titImagem']."',CONVERT(varbinary(max),'$aux'))";
 			//$result = odbc_exec($conn,$query) or die(odbc_errormsg($conn));
 			if ($resultI) {
-				$stmt = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
-								VALUES (?,?,IDENT_CURRENT('IMAGEM'),?,?,1,?)");
+				$insertImg = odbc_fetch_array($stmt);
+				/*$stmtQ = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
+								VALUES (?,?,?,?,?,1,?)");*/
 			}
 		}else{
 			if($_FILES['imagemQuestao']['size'] > 9000000){
@@ -43,29 +44,31 @@ if (isset($_POST['cadastrar'])){
 			}else{
 				//echo 'S&oacute; s&atilde;o aceitos arquivos de imagem. Tamanho da imagem: '.$_FILES['imagemQuestao']['size'];
 			}
-			$idImagem = 'NULL';
+			$insertImg = array('codImagem' => 'NULL');
 		}
 	}else{
-		$stmt = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
-								VALUES (?,?,NULL,?,?,1,?)");
+		$insertImg = array('codImagem' => 'NULL');
 	}
 	//QUESTAO
-	$resultQ = odbc_execute($stmt,array($_POST['textoQuestao'],$_POST['assunto'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
+	$stmtQ = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
+								OUTPUT INSERTED.codQuestao VALUES (?,?,?,?,?,1,?)");
+	$resultQ = odbc_execute($stmtQ,array($_POST['textoQuestao'],$_POST['assunto'],$insertImg['codImagem'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
 	
 	if ($resultQ) {
+		$insertQuestao = odbc_fetch_array($stmtQ);
 		for ($i=1;$i<=$_POST['qtdAlternativas'];$i++) {
 			$stmt = odbc_prepare($conn,"INSERT INTO alternativa (codQuestao, codAlternativa,textoAlternativa,correta)
-										VALUES (IDENT_CURRENT('QUESTAO'),?,?,?)");
+										VALUES (?,?,?,?)");
 			if (!isset($_POST['correta_'.$i])){$correta=0;}else{$correta=$_POST['correta_'.$i];}
 			switch($_POST['tipoQuestao']){
 				case "A": 
-					$arr = array($i,$_POST['alternativa_'.$i],$correta);
+					$arr = array($insertQuestao['codQuestao'],$i,$_POST['alternativa_'.$i],$correta);
 					break;
 				case "T": 
-					$arr = array($i,$_POST['resposta_'.$i],1);
+					$arr = array($insertQuestao['codQuestao'],$i,$_POST['resposta_'.$i],1);
 					break;
 				case "V": 
-					$arr = array($i,$_POST['respostaVF'],$_POST['correta']);
+					$arr = array($insertQuestao['codQuestao'],$i,$_POST['respostaVF'],$_POST['correta']);
 					break;
 			}
 			$result = odbc_execute($stmt, $arr);
@@ -107,7 +110,7 @@ if (isset($_POST['cadastrar'])){
 		<div class="cadastro">
 	      <div class="tab-content">
 	        <div id="signup">   
-			  <?=($result)?"<p>Questão cadastrada com sucesso!</p>":"<p>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>"?>
+			  <?=(isset($result)&&$result)?"<p>Questão cadastrada com sucesso!</p>":"<p>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>"?>
 
 	          <span class="title-cadastro">Cadastro de Questões</span> 
 
