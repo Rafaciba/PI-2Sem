@@ -44,16 +44,16 @@ if (isset($_POST['cadastrar'])){
 			}else{
 				//echo 'S&oacute; s&atilde;o aceitos arquivos de imagem. Tamanho da imagem: '.$_FILES['imagemQuestao']['size'];
 			}
-			$insertImg = array('codImagem' => NULL);
+			$insertImg = array('codImagem' => 'NULL');
 		}
 	}else{
-		$insertImg = array('codImagem' => NULL);
+		$insertImg = array('codImagem' => 'NULL');
 	}
 	//QUESTAO
 	$stmtQ = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
 								OUTPUT INSERTED.codQuestao VALUES (?,?,?,?,?,1,?)");
 	$resultQ = odbc_execute($stmtQ,array($_POST['textoQuestao'],$_POST['assunto'],$insertImg['codImagem'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
-	echo utf8_encode(odbc_errormsg($conn));
+	
 	if ($resultQ) {
 		$insertQuestao = odbc_fetch_array($stmtQ);
 		for ($i=1;$i<=$_POST['qtdAlternativas'];$i++) {
@@ -80,11 +80,11 @@ if (isset($_POST['cadastrar'])){
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="iso-8859-1">
+<meta charset="UTF-8">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/javascript.js"></script>
  
 <title>PI - SENAC</title>
 </head>
@@ -118,64 +118,78 @@ if (isset($_POST['cadastrar'])){
 	          
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
 					<div class="field-wrap">
-						  <label>Enunciado</label>
-						  <textarea name="textoQuestao" id="textoQuestao" maxlength="300" rows="5"></textarea>
+						  <span>
+						  		<textarea  class="basic-slide" maxlength="300" name="textoQuestao" id="textoQuestao">						  			
+						  		</textarea>  
+						  		<label class="enunciado" for="Enunciado">Enunciado</label> 
+						  </span> 	  
 					</div>
 					<div class="field-wrap">
-						<label>Assunto:</label>
-						<select name="assunto">
-							<?php
-								$query = "SELECT codAssunto, descricao FROM assunto ORDER BY descricao ASC";
-								$result = odbc_exec($conn,$query);
-								if(odbc_num_rows($result)>0){
-									while($assunto = odbc_fetch_array($result)){
-										echo '<option value="'.$assunto['codAssunto'].'">'.$assunto['descricao'].'</option>';
+						<span> 						
+							<select class="basic-slide" name="assunto">
+								<?php
+									$query = "SELECT codAssunto, descricao FROM assunto ORDER BY descricao ASC";
+									$result = odbc_exec($conn,$query);
+									if(odbc_num_rows($result)>0){
+										while($assunto = odbc_fetch_array($result)){
+											echo '<option value="'.$assunto['codAssunto'].'">'.utf8_encode($assunto['descricao']).'</option>';
+										}
 									}
-								}
-							?>
-						</select>
+								?>
+							</select>
+							<label for="assunto">Assunto:</label>
 					</div>
 					<div class="field-wrap">
-						<label>Tipo:</label>
-						<select name="tipoQuestao" id="tipoQuestao">
-							<?php
-								$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao ASC";
-								$result = odbc_exec($conn,$query);
-								if(odbc_num_rows($result)>0){
-									while($tipoQuestao = odbc_fetch_array($result)){
-										echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.$tipoQuestao['descricao'].'</option>';
+						<span> 
+							<select class="basic-slide" name="tipoQuestao" id="tipoQuestao">
+								<?php
+									$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao ASC";
+									$result = odbc_exec($conn,$query);
+									if(odbc_num_rows($result)>0){
+										while($tipoQuestao = odbc_fetch_array($result)){
+											echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.utf8_encode($tipoQuestao['descricao']).'</option>';
+										}
 									}
-								}
-							?>
-						</select>
+								?>
+							</select>
+							<label for="tipo">Tipo:</label>
+						</span>	
 					</div>
 					<div class="field-wrap">
-						<label>Dificuldade:</label> 
-						<select name="dificuldade">
-							<option value="F">Fácil</option>
-							<option value="M">Médio</option>
-							<option value="D">Difícil</option>
-						</select>
+						<span> 						 
+							<select class="basic-slide" name="dificuldade">
+								<option value="F">Fácil</option>
+								<option value="M">Médio</option>
+								<option value="D">Difícil</option>
+							</select>
+							<label for="dificuldade">Dificuldade:</label>
+						</span>	
 					</div>
 					<div class="field-wrap">
-						<label>Imagem:</label> 
-						<input type="file" name="imagemQuestao"><br>
-						<label>T&iacute;tulo da imagem:</label>
-						<input type="text" name="titImagem" maxlength="50" size="50">
+						<span> 
+							<input class="basic-slide" type="file" name="imagemQuestao">
+							<label for="imagem">Imagem:</label> 
+						</span> 
 					</div>
+					<div class="field-wrap">
+						<span> 
+							<input class="basic-slide" type="text" name="titImagem" maxlength="50" size="50">
+							<label for="titulo da imagem"><small>T&iacute;tulo da imagem:</small></label>
+						</span> 
+					</div>	
 					<input type="hidden" name="qtdAlternativas" id="qtdAlternativas" value="1">
 					<div id="alternativas">
 						<h4>Alternativas</h4>
 						<table>
 							<tr>
 								<td>&nbsp;</td>
-								<td>Texto da alternativa</td>
+								<td><span><label>Texto da alternativa</label></span></td>
 								<td>Correta</td>
 							</tr>
 							<tr>
 								<td>1</td>
-								<td><input type="text" name="alternativa_1" maxlength="250" size="80"></td>
-								<td><input type="checkbox" name="correta_1" value="1"></td>
+								<td><input type="text" class="basic-slide" name="alternativa_1" maxlength="250" size="80"></td>
+								<td><input type="checkbox" class="basic-slide" name="correta_1" value="1"></td>
 							</tr>
 						</table>
 						<div>

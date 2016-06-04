@@ -47,16 +47,8 @@ if (isset($_GET['p'])) {
 if (isset($_GET['pp'])) {
 	$pp = $_GET['pp'];
 }else{
-	$pp = 20;
+	$pp = 250;
 }
-
-$totalQuery = odbc_exec($conn,"SELECT count(*) as total FROM questao q 
-			INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-			JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-			JOIN professor p ON q.codProfessor = p.codProfessor");
-$totalQst = odbc_fetch_array($totalQuery);
-
-$tt = $totalQst['total'];
 
 if (isset($_GET['ordem'])) {
 	$ordem = $_GET['ordem'];
@@ -70,15 +62,6 @@ if (isset($_GET['busca'])) {
 }else{
 	$buscaQuery = "";
 }
-
-$query = "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, q.codProfessor, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
-			FROM questao q 
-			INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-			JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-			JOIN professor p ON q.codProfessor = p.codProfessor 
-			$buscaQuery 
-			ORDER BY q.codQuestao DESC OFFSET (".(($pp * $p) - $pp).") ROWS FETCH NEXT (".$pp.") ROWS ONLY";
-$result = odbc_exec($conn,$query);
 
 ?>
 
@@ -94,7 +77,7 @@ $result = odbc_exec($conn,$query);
 <title>PI - SENAC</title>
 </head>
 
-<body>
+<body style="background-color: #385965;">
 <?php if (isset($_SESSION["showMenu"])&&$_SESSION["showMenu"]) { ?>
 	<header>
 		<div class="content white">
@@ -116,9 +99,28 @@ $result = odbc_exec($conn,$query);
 			<div class="adicionar">
 				<a href="addQuestao.php" class="button-cadastrar button-block"/>Adicionar +</a>
 			</div>
-			<table class="responsive-table"> <br>
-			    <caption>Listagem das Questões</caption> 
-				<?php
+			<div class="listagem-question">
+				Listagem das Questões
+			</div>
+			<table class="responsive-table">  
+				<?php 
+					$query = "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
+					FROM questao q 
+					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
+					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
+					JOIN professor p ON q.codProfessor = p.codProfessor 
+					$buscaQuery 
+					ORDER BY q.codQuestao DESC OFFSET ($p-1) ROWS FETCH NEXT ($p * $pp) ROWS ONLY";
+					$result = odbc_exec($conn,$query);
+					/*$stmt = odbc_prepare($conn, "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
+					FROM questao q 
+					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
+					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
+					JOIN professor p ON q.codProfessor = p.codProfessor
+					ORDER BY codQuestao OFFSET (?-1) ROWS FETCH NEXT (? * ?) ROWS ONLY");
+					$result = odbc_execute($stmt, array($p, $p, $pp));
+					odbc_errormsg($conn);
+					print_r(odbc_fetch_array($stmt));*/
 					if(odbc_num_rows($result)>0){
 				?>
 			    <thead>
@@ -152,20 +154,12 @@ $result = odbc_exec($conn,$query);
 				  ?>
 			      <tr> 
 			        <td data-title="">
-					<?php 
-						if($_SESSION["tipoProfessor"]=="A"||$_SESSION["codProfessor"]==$area["codProfessor"]){
-					?>
 						<a href="update.php?cq=<?=$area["codQuestao"]?>" class="edit"></a>
 						<a href="delete.php?cq=<?=$area["codQuestao"]?>" class="delete"></a>
-					<?php
-						}else{
-					?>
-						<a href="view.php?cq=<?=$area["codQuestao"]?>" class="view">view</a>
-					<?php } ?>
 			        </td>
 			        <td data-title=""><?=utf8_encode($area["textoQuestao"])?></td>
 			        <td data-title=""><?=utf8_encode($area["assunto"])?></td>
-			        <td data-title="" data-type=""><?=utf8_encode($area["tipoquestao"])?></td>
+			        <td data-title="" data-type=""><?=$area["tipoquestao"]?></td>
 			        <td data-title="" data-type=""><?=utf8_encode($area["nome"])?></td>
 			        <td data-title="" data-type=""><?=$area["dificuldade"]?></td>
 			        <td data-title="" data-type=""><?=($area["ativo"])?'<div class="ativo"></div>':'<div class="desativo"></div>'?>
@@ -179,15 +173,6 @@ $result = odbc_exec($conn,$query);
 					}
 				?>
 	  		</table>
-		</section>
-		<section>
-			<div>
-			<?php
-				for($j=1;$j<=($tt/$pp);$j++){
-					echo '<a href="questao.php?p='.$j.'">'.$j.'</a>';
-				}
-			?>
-			</div>
 		</section>
 	</div>
 </div>
