@@ -44,16 +44,16 @@ if (isset($_POST['cadastrar'])){
 			}else{
 				//echo 'S&oacute; s&atilde;o aceitos arquivos de imagem. Tamanho da imagem: '.$_FILES['imagemQuestao']['size'];
 			}
-			$insertImg = array('codImagem' => 'NULL');
+			$insertImg = array('codImagem' => NULL);
 		}
 	}else{
-		$insertImg = array('codImagem' => 'NULL');
+		$insertImg = array('codImagem' => NULL);
 	}
 	//QUESTAO
 	$stmtQ = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
 								OUTPUT INSERTED.codQuestao VALUES (?,?,?,?,?,1,?)");
 	$resultQ = odbc_execute($stmtQ,array($_POST['textoQuestao'],$_POST['assunto'],$insertImg['codImagem'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
-	
+	echo utf8_encode(odbc_errormsg($conn));
 	if ($resultQ) {
 		$insertQuestao = odbc_fetch_array($stmtQ);
 		for ($i=1;$i<=$_POST['qtdAlternativas'];$i++) {
@@ -80,11 +80,11 @@ if (isset($_POST['cadastrar'])){
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="iso-8859-1">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="js/javascript.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
  
 <title>PI - SENAC</title>
 </head>
@@ -119,7 +119,7 @@ if (isset($_POST['cadastrar'])){
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
 					<div class="field-wrap">
 						  <label>Enunciado</label>
-						  <input type="text" name="textoQuestao" id="textoQuestao" maxlength="300" size="90">
+						  <textarea name="textoQuestao" id="textoQuestao" maxlength="300" rows="5"></textarea>
 					</div>
 					<div class="field-wrap">
 						<label>Assunto:</label>
@@ -129,7 +129,7 @@ if (isset($_POST['cadastrar'])){
 								$result = odbc_exec($conn,$query);
 								if(odbc_num_rows($result)>0){
 									while($assunto = odbc_fetch_array($result)){
-										echo '<option value="'.$assunto['codAssunto'].'">'.utf8_encode($assunto['descricao']).'</option>';
+										echo '<option value="'.$assunto['codAssunto'].'">'.$assunto['descricao'].'</option>';
 									}
 								}
 							?>
@@ -143,7 +143,7 @@ if (isset($_POST['cadastrar'])){
 								$result = odbc_exec($conn,$query);
 								if(odbc_num_rows($result)>0){
 									while($tipoQuestao = odbc_fetch_array($result)){
-										echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.utf8_encode($tipoQuestao['descricao']).'</option>';
+										echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.$tipoQuestao['descricao'].'</option>';
 									}
 								}
 							?>

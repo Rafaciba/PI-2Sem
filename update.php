@@ -120,7 +120,7 @@ if (isset($_POST['cadastrar'])){
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="js/javascript.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
  
 <title>PI - SENAC</title>
 </head>
@@ -145,23 +145,12 @@ if (isset($_POST['cadastrar'])){
 	<div class="content white">
 		<div class="cadastro">
 	      <div class="tab-content">
-	        <div id="signup">   
-			  <?php //=($result)?"<p>Questão cadastrada com sucesso!</p>":"<p>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>"?>
+	        <div id="signup">
 
 	          <span class="title-cadastro">Cadastro de Questões</span> 
 
 	          <br><br>
               <?php
-              	/*$query = "SELECT q.codQuestao, q.textoQuestao, q.dificuldade, q.codAssunto, q.codTipoQuestao, 
-					a.descricao AS assunto, 
-					tq.descricao AS tipoquestao, 
-					i.tituloImagem, i.bitmapImagem
-					FROM questao q 
-					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-					LEFT JOIN imagem i ON q.codImagem = i.codImagem
-					WHERE q.codQuestao = $codQuestao";
-				$resultado = odbc_exec($conn, $query);*/
 				$stmt = odbc_prepare($conn,"SELECT q.codQuestao, q.textoQuestao, q.dificuldade, q.codAssunto, q.codTipoQuestao, 
 					a.descricao AS assunto, 
 					tq.descricao AS tipoquestao, 
