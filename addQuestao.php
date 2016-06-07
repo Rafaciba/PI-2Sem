@@ -83,6 +83,7 @@ if (isset($_POST['cadastrar'])){
 <meta charset="UTF-8">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="js/javascript.js"></script>
  
@@ -98,7 +99,7 @@ if (isset($_POST['cadastrar'])){
 				  <ul>
 				    <li id="question"><a href="questao.php" title="Home" >Questões</a></li>
 				    <li id="welcome">Bem Vindo, <?=$_SESSION["nomeProfessor"]?></li> 
-				    <li id="logout"><a href="index.php?logout=1" title="Logout">Logout</a></li>
+				    <li id="logout"><a href="index.php?logout=1" title="Logout">Logout</a> <i class="fa fa-sign-out" aria-hidden="true"></i></li>
 				  </ul>
 				</nav>
 			</div>
@@ -110,7 +111,7 @@ if (isset($_POST['cadastrar'])){
 		<div class="cadastro">
 	      <div class="tab-content">
 	        <div id="signup">   
-			  <?=(isset($result)&&$result)?"<p>Questão cadastrada com sucesso!</p>":"<p>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>"?>
+			  <?=(isset($result)&&$result)?"<p class='sucess'>Questão cadastrada com sucesso!</p>":"<p class='error'>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>"?>
 
 	          <span class="title-cadastro">Cadastro de Questões</span> 
 
@@ -174,51 +175,67 @@ if (isset($_POST['cadastrar'])){
 					<div class="field-wrap">
 						<span> 
 							<input class="basic-slide" type="text" name="titImagem" maxlength="50" size="50">
-							<label for="titulo da imagem"><small>T&iacute;tulo da imagem:</small></label>
+							<label class="pad" for="titulo da imagem"><p>T&iacute;tulo da imagem:</p></label>
 						</span> 
 					</div>	
 					<input type="hidden" name="qtdAlternativas" id="qtdAlternativas" value="1">
 					<div id="alternativas">
 						<h4>Alternativas</h4>
-						<table>
-							<tr>
-								<td>&nbsp;</td>
-								<td><span><label>Texto da alternativa</label></span></td>
-								<td>Correta</td>
-							</tr>
-							<tr>
-								<td>1</td>
-								<td><input type="text" class="basic-slide" name="alternativa_1" maxlength="250" size="80"></td>
-								<td><input type="checkbox" class="basic-slide" name="correta_1" value="1"></td>
-							</tr>
-						</table>
+						<div class="field-wrap">
+							<span>  
+								<input type="text" class="basic-slide small" name="alternativa_1" maxlength="250" size="80">
+								<label class="pad"><p>Texto da alternativa</p></label>  
+							</span> 
+						</div>	
+						<div class="field-wrap right"> 
+							<label><h3>Correta</h3></label> 
+							<div class="switch">
+							  <input type="checkbox" id="c1" name="correta_1" value="1" />
+							  <label for="c1"></label>
+							</div>
+							<!-- <input type="checkbox" class="basic-slide correta" name="correta_1" value="1"> -->	 
+						</div> 
+						 
 						<div>
-							<button id="addAlternativa" name="addAlternativa">Adicionar alternativa</button>
-							<button id="rmvAlternativa" name="rmvAlternativa">Remover alternativa</button>
+							<button id="addAlternativa" class="addAlternativa" name="addAlternativa">Adicionar alternativa</button>
+							<button id="rmvAlternativa" class="rmvAlternativa" name="rmvAlternativa">Remover alternativa</button> 
 						</div>
 					</div>
 					<div id="textoObjetivo">
 						<h4>Respostas</h4>
-						<table>
-							<tr>
-								<td>&nbsp;</td>
-								<td>Texto da resposta</td>
-							</tr>
-							<tr>
-								<td>1</td>
-								<td><input type="text" name="resposta_1" maxlength="250" size="80"></td>
-							</tr>
-						</table>
+						<div class="field-wrap">
+							<span>  
+								<input type="text" class="basic-slide" name="resposta_1" maxlength="250" size="80">
+								<label class="pad"><p>Texto da resposta</p></label>  
+							</span> 
+						</div> 
 						<div>
-							<button id="addResposta" name="addResposta">Adicionar resposta</button>
-							<button id="rmvResposta" name="rmvResposta">Remover resposta</button>
+							<button id="addResposta" class="addAlternativa" name="addResposta">Adicionar resposta</button>
+							<button id="rmvResposta" class="rmvAlternativa" name="rmvResposta">Remover resposta</button>
 						</div>
 					</div>
 					<div id="verdadeiroFalso">
 						<h4>Resposta</h4>
-						Texto da resposta: <input type="text" name="respostaVF" maxlength="250" size="80"><br>
-						Verdadeira: <input type="radio" name="correta" value="1">
-						Falsa: <input type="radio" name="correta" value="0">
+						<div class="field-wrap">
+							<span>  
+								<input type="text" class="basic-slide small" name="respostaVF" maxlength="250" size="80">
+								<label class="pad"><p>Texto da resposta</p></label>  
+							</span> 
+						</div>  
+						<div class="field-wrap true"> 
+							<label><h3>Verdadeira:</h3></label> 
+							<div class="switch">
+						 		<input type="checkbox" id="c1" name="correta_1" value="1">
+							  <label for="c1"></label>
+							</div> 
+						</div> 
+						<div class="field-wrap false"> 
+							<label><h3>Falsa:</h3></label> 
+							<div class="switch">
+						 		<input type="checkbox" name="falsa" value="0">
+							  <label for="c1"></label>
+							</div> 
+						</div>  
 					</div>
 					<br><br>
 					<input type="submit" value="Cadastrar" name="cadastrar" class="button-cadastrar button-block">
