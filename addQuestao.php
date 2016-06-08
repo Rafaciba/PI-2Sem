@@ -86,6 +86,7 @@ if (isset($_POST['cadastrar'])){
 <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="js/javascript.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
  
 <title>PI - SENAC</title>
 </head>
