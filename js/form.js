@@ -81,6 +81,7 @@ $(function(){
 		}
 		return false;
 	});
+<<<<<<< HEAD
 
 	//checado
 	$(".checkbox").change(function(){
@@ -91,4 +92,6 @@ $(function(){
 		}
 	});	
 
+=======
+>>>>>>> origin/master
 })
