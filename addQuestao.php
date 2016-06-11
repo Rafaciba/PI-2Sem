@@ -3,117 +3,40 @@
 include("config/database.php");
 include("config/session.php");
 include("config/func.php");
-
-if(!isset($_SESSION["codProfessor"])){
-	//caso o usuário chegou a essa página e não está logado, volta para a index
-	header("Location: index.php"); exit;	
-}
-
-if (isset($_POST['cadastrar'])){
-	//echo "Cadastrando questão!<br>";
-	//IMAGEM
-	if(isset($_FILES['imagemQuestao'])&&$_FILES['imagemQuestao']['size'] > 0){
-		if(	substr($_FILES['imagemQuestao']['type'], 0, 5) == 'image' &&
-			$_FILES['imagemQuestao']['error'] == 0 &&
-			($_FILES['imagemQuestao']['size'] > 0 && $_FILES['imagemQuestao']['size'] < 9000000)){
-			//print_r($_FILES);
-			//echo 'Arquivo recebido com sucesso<BR>';
-			
-			$file = fopen($_FILES['imagemQuestao']['tmp_name'],'rb');
-			$fileParaDB = fread($file, filesize($_FILES['imagemQuestao']['tmp_name']));
-			fclose($file);
-			
-			//echo $fileParaDB;
-			
-			//CONVERT(varbinary(max),'$fileParaDB')
-			$stmt = odbc_prepare($conn,'INSERT INTO imagem (tituloImagem,bitmapImagem) OUTPUT INSERTED.codImagem VALUES (?,?)');
-			$resultI = odbc_execute($stmt,array($_POST['titImagem'], $fileParaDB));
-			//$query = "INSERT INTO imagem (tituloImagem,bitmapImagem) VALUES ('".$_POST['titImagem']."',CONVERT(varbinary(max),'$aux'))";
-			//$result = odbc_exec($conn,$query) or die(odbc_errormsg($conn));
-			if ($resultI) {
-				$insertImg = odbc_fetch_array($stmt);
-				/*$stmtQ = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
-								VALUES (?,?,?,?,?,1,?)");*/
-			}
-		}else{
-			if($_FILES['imagemQuestao']['size'] > 9000000){
-				$base = log($_FILES['imagemQuestao']['size']) / log(1024);
-				$sufixo = array("", "K", "M", "G", "T");
-				$tam_em_mb = round(pow(1024, $base - floor($base)),2).$sufixo[floor($base)];
-				//echo 'Tamanho m&aacute;ximo de imagem 9 Mb. Tamanho da imagem enviada: '.$tam_em_mb;
-			}else{
-				//echo 'S&oacute; s&atilde;o aceitos arquivos de imagem. Tamanho da imagem: '.$_FILES['imagemQuestao']['size'];
-			}
-			$insertImg = array('codImagem' => 'NULL');
-		}
-	}else{
-		$insertImg = array('codImagem' => 'NULL');
-	}
-	//QUESTAO
-	$stmtQ = odbc_prepare($conn,"INSERT INTO questao (textoQuestao,codAssunto,codImagem,codTipoQuestao,codProfessor,ativo,dificuldade) 
-								OUTPUT INSERTED.codQuestao VALUES (?,?,?,?,?,1,?)");
-	$resultQ = odbc_execute($stmtQ,array($_POST['textoQuestao'],$_POST['assunto'],$insertImg['codImagem'],$_POST['tipoQuestao'],$_SESSION['codProfessor'],$_POST['dificuldade']));
-	
-	if ($resultQ) {
-		$insertQuestao = odbc_fetch_array($stmtQ);
-		for ($i=1;$i<=$_POST['qtdAlternativas'];$i++) {
-			$stmt = odbc_prepare($conn,"INSERT INTO alternativa (codQuestao, codAlternativa,textoAlternativa,correta)
-										VALUES (?,?,?,?)");
-			if (!isset($_POST['correta_'.$i])){$correta=0;}else{$correta=$_POST['correta_'.$i];}
-			switch($_POST['tipoQuestao']){
-				case "A": 
-					$arr = array($insertQuestao['codQuestao'],$i,$_POST['alternativa_'.$i],$correta);
-					break;
-				case "T": 
-					$arr = array($insertQuestao['codQuestao'],$i,$_POST['resposta_'.$i],1);
-					break;
-				case "V": 
-					$arr = array($insertQuestao['codQuestao'],$i,$_POST['respostaVF'],$_POST['correta']);
-					break;
-			}
-			$result = odbc_execute($stmt, $arr);
-		}
-	}
-}
-
+include("func/adicionar.php");
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="ISO-8859-1">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="js/javascript.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
  
 <title>PI - SENAC</title>
 </head>
 
 <body>
-<?php if (isset($_SESSION["showMenu"])&&$_SESSION["showMenu"]) { ?>
-	<header>
-		<div class="content white">
-			<div class="menu">
-				<nav>
-				  <ul>
-				    <li id="question"><a href="questao.php" title="Home" >Questões</a></li>
-				    <li id="welcome">Bem Vindo, <?=$_SESSION["nomeProfessor"]?></li> 
-				    <li id="logout"><a href="index.php?logout=1" title="Logout">Logout</a> <i class="fa fa-sign-out" aria-hidden="true"></i></li>
-				  </ul>
-				</nav>
-			</div>
-		</div>	
-	</header>
-<?php } ?>
+<?php include("menu.php"); ?>
 <section>
 	<div class="content white">
 		<div class="cadastro">
 	      <div class="tab-content">
 	        <div id="signup">   
-			  <?=(isset($result)&&$result)?"<p class='sucess'>Questão cadastrada com sucesso!</p>":"<p class='error'>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>"?>
+			  <?php 
+			  if(isset($result)) {
+				  if ($result) {
+				  	echo "<p class='sucess'>Quest�o cadastrada com sucesso!</p>";
+				  }else{
+				  	echo "<p class='error'>Ocorreu um erro ao cadastrar a quest�o. Tente novamente.</p>";
+				  }
+			  } 
+			  ?>
 
-	          <span class="title-cadastro">Cadastro de Questões</span> 
+	          <span class="title-cadastro">Cadastro de Quest&otilde;es</span> 
 
 	          <br><br>
 	          
@@ -133,7 +56,7 @@ if (isset($_POST['cadastrar'])){
 									$result = odbc_exec($conn,$query);
 									if(odbc_num_rows($result)>0){
 										while($assunto = odbc_fetch_array($result)){
-											echo '<option value="'.$assunto['codAssunto'].'">'.utf8_encode($assunto['descricao']).'</option>';
+											echo '<option value="'.$assunto['codAssunto'].'">'.$assunto['descricao'].'</option>';
 										}
 									}
 								?>
@@ -144,11 +67,11 @@ if (isset($_POST['cadastrar'])){
 						<span> 
 							<select class="basic-slide" name="tipoQuestao" id="tipoQuestao">
 								<?php
-									$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao ASC";
+									$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao DESC";
 									$result = odbc_exec($conn,$query);
 									if(odbc_num_rows($result)>0){
 										while($tipoQuestao = odbc_fetch_array($result)){
-											echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.utf8_encode($tipoQuestao['descricao']).'</option>';
+											echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.$tipoQuestao['descricao'].'</option>';
 										}
 									}
 								?>
@@ -159,13 +82,13 @@ if (isset($_POST['cadastrar'])){
 					<div class="field-wrap">
 						<span> 						 
 							<select class="basic-slide" name="dificuldade">
-								<option value="F">Fácil</option>
-								<option value="M">Médio</option>
-								<option value="D">Difícil</option>
+								<option value="F">F&aacute;cil</option>
+								<option value="M">M&eacute;dio</option>
+								<option value="D">Dif&iacute;cil</option>
 							</select>
 							<label for="dificuldade">Dificuldade:</label>
 						</span>	
-					</div>
+					</div>	
 					<div class="field-wrap">
 						<span> 
 							<input class="basic-slide" type="file" name="imagemQuestao">
@@ -181,21 +104,24 @@ if (isset($_POST['cadastrar'])){
 					<input type="hidden" name="qtdAlternativas" id="qtdAlternativas" value="1">
 					<div id="alternativas">
 						<h4>Alternativas</h4>
-						<div class="field-wrap">
-							<span>  
-								<input type="text" class="basic-slide small" name="alternativa_1" maxlength="250" size="80">
-								<label class="pad"><p>Texto da alternativa</p></label>  
-							</span> 
-						</div>	
-						<div class="field-wrap right"> 
-							<label><h3>Correta</h3></label> 
-							<div class="switch">
-							  <input type="checkbox" id="c1" name="correta_1" value="1" />
-							  <label for="c1"></label>
-							</div>
-							<!-- <input type="checkbox" class="basic-slide correta" name="correta_1" value="1"> -->	 
-						</div> 
-						 
+							<div id="AltRows">
+								<div>
+									<div class="field-wrap">
+										<span>  
+											<input type="text" class="basic-slide small" name="alternativa_1" maxlength="250" size="80">
+											<label class="pad"><p>Texto da alternativa</p></label>  
+										</span> 
+									</div>	
+									<div class="field-wrap right"> 
+										<label><h3>Correta</h3></label> 
+										<div class="switch">
+										  <input type="checkbox" id="c1" name="correta_1" value="1" class="checkbox" />
+										  <label for="c1"></label>
+										</div>
+										<!-- <input type="checkbox" class="basic-slide correta" name="correta_1" value="1"> -->	 
+									</div>
+								</div>	 
+						 	</div>
 						<div>
 							<button id="addAlternativa" class="addAlternativa" name="addAlternativa">Adicionar alternativa</button>
 							<button id="rmvAlternativa" class="rmvAlternativa" name="rmvAlternativa">Remover alternativa</button> 
@@ -203,12 +129,14 @@ if (isset($_POST['cadastrar'])){
 					</div>
 					<div id="textoObjetivo">
 						<h4>Respostas</h4>
-						<div class="field-wrap">
-							<span>  
-								<input type="text" class="basic-slide" name="resposta_1" maxlength="250" size="80">
-								<label class="pad"><p>Texto da resposta</p></label>  
-							</span> 
-						</div> 
+						<div id="AltRows">
+							<div class="field-wrap">
+								<span>  
+									<input type="text" class="basic-slide" name="resposta_1" maxlength="250" size="80">
+									<label class="pad"><p>Texto da resposta</p></label>  
+								</span> 
+							</div> 
+						</div>	
 						<div>
 							<button id="addResposta" class="addAlternativa" name="addResposta">Adicionar resposta</button>
 							<button id="rmvResposta" class="rmvAlternativa" name="rmvResposta">Remover resposta</button>
@@ -224,16 +152,16 @@ if (isset($_POST['cadastrar'])){
 						</div>  
 						<div class="field-wrap true"> 
 							<label><h3>Verdadeira:</h3></label> 
-							<div class="switch">
-						 		<input type="checkbox" id="c1" name="correta_1" value="1">
-							  <label for="c1"></label>
+							<div class="btnRadio">
+						 		<input type="radio" id="true-radio" name="verdadeira" value="1" class="checkbox">
+							  <label for="true-radio"></label>
 							</div> 
 						</div> 
 						<div class="field-wrap false"> 
 							<label><h3>Falsa:</h3></label> 
-							<div class="switch">
-						 		<input type="checkbox" name="falsa" value="0">
-							  <label for="c1"></label>
+							<div class="btnRadio">
+						 		<input type="checkbox" id="false-radio" name="falsa" value="0" class="checkbox">
+							  <label for="false-radio"></label>
 							</div> 
 						</div>  
 					</div>

@@ -858,6 +858,8 @@ input.basic-slide.correta {
  .switch input {
   display: none;
 }
+
+
 .switch label {
   -webkit-appearance: none;
   display: block;
@@ -1071,4 +1073,8 @@ input.basic-slide.correta {
   width: 460px;
 }
 
+.img-up {
+  max-width: 600px;
+  margin: 10px;
+}
 

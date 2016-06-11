@@ -8,33 +8,33 @@ if (isset($_POST["loginButton"])){
 
 	$email = $_POST['user'];
 	$senha = $_POST['pass'];
-	//requisi√ß√£o para verificar se o email e senha existem no banco de dados e coleta suas informa√ß√µes se o mesmo existir
+	//requisiÁ„o para verificar se o email e senha existem no banco de dados e coleta suas informaÁıes se o mesmo existir
 	$query = "  SELECT *
 				FROM
 				professor
 				WHERE email = '$email' AND senha = HASHBYTES('SHA1', '$senha')";
 
 
-	//executa a requisi√ß√£o no banco de dados
+	//executa a requisiÁ„o no banco de dados
 	$result = odbc_exec($conn,$query);
-	//recebe o n√∫mero de linhas de resultado retornadas
+	//recebe o n˙mero de linhas de resultado retornadas
 	$login = odbc_num_rows($result);
 	
-	if($login>0){//se existem resultados √© TRUE
+	if($login>0){//se existem resultados È TRUE
 		$credenciais = odbc_fetch_array($result);//passa o resultado encontrado para um array
 		
-		//passa os valores necess√°rios para as vari√°veis globais
+		//passa os valores necess·rios para as vari·veis globais
 		$_SESSION["showMenu"] = TRUE;
 		$_SESSION["codProfessor"]=$credenciais["codProfessor"];
 		$_SESSION["nomeProfessor"]=$credenciais["nome"];
 		$_SESSION["tipoProfessor"]=$credenciais["tipo"];
 	}else{
-		//caso n√£o tenha resultados volta para a index informando que houve erro no login
+		//caso n„o tenha resultados volta para a index informando que houve erro no login
 		header("Location: index.php?i=1"); exit;
 	}
 	
 } else if(!isset($_SESSION["codProfessor"])){
-	//caso o usu√°rio chegou a essa p√°gina sem ser pelo formul√°rio e n√£o est√° logado, volta para a index
+	//caso o usu·rio chegou a essa p·gina sem ser pelo formul·rio e n„o est· logado, volta para a index
 	header("Location: index.php"); exit;	
 }
 
@@ -47,8 +47,16 @@ if (isset($_GET['p'])) {
 if (isset($_GET['pp'])) {
 	$pp = $_GET['pp'];
 }else{
-	$pp = 250;
+	$pp = 20;
 }
+
+$totalQuery = odbc_exec($conn,"SELECT count(*) as total FROM questao q 
+			INNER JOIN assunto a ON q.codAssunto = a.codAssunto
+			JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
+			JOIN professor p ON q.codProfessor = p.codProfessor");
+$totalQst = odbc_fetch_array($totalQuery);
+
+$tt = $totalQst['total'];
 
 if (isset($_GET['ordem'])) {
 	$ordem = $_GET['ordem'];
@@ -63,12 +71,21 @@ if (isset($_GET['busca'])) {
 	$buscaQuery = "";
 }
 
+$query = "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, q.codProfessor, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
+			FROM questao q 
+			INNER JOIN assunto a ON q.codAssunto = a.codAssunto
+			JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
+			JOIN professor p ON q.codProfessor = p.codProfessor 
+			$buscaQuery 
+			ORDER BY q.codQuestao DESC OFFSET (".(($pp * $p) - $pp).") ROWS FETCH NEXT (".$pp.") ROWS ONLY";
+$result = odbc_exec($conn,$query);
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="ISO-8859-1">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'> 
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
@@ -78,21 +95,7 @@ if (isset($_GET['busca'])) {
 </head>
 
 <body style="background-color: #385965;">
-<?php if (isset($_SESSION["showMenu"])&&$_SESSION["showMenu"]) { ?>
-	<header>
-		<div class="content white">
-			<div class="menu">
-				<nav>
-				  <ul>
-				    <li id="question"><a href="questao.php" title="Home" >Quest√µes</a></li>
-				    <li id="welcome">Bem Vindo, <?=$_SESSION["nomeProfessor"]?></li> 
-				    <li id="logout"><a href="index.php?logout=1" title="Logout">Logout</a></li>
-				  </ul>
-				</nav>
-			</div>
-		</div>	
-	</header>
-<?php } ?>
+<?php include("menu.php"); ?>
 <div class="content total">
 	<div class="content white">
 		<section> 
@@ -100,27 +103,10 @@ if (isset($_GET['busca'])) {
 				<a href="addQuestao.php" class="button-cadastrar button-block"/>Adicionar +</a>
 			</div>
 			<div class="listagem-question">
-				Listagem das Quest√µes
+				Listagem das Quest&otilde;es
 			</div>
 			<table class="responsive-table">  
 				<?php 
-					$query = "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
-					FROM questao q 
-					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-					JOIN professor p ON q.codProfessor = p.codProfessor 
-					$buscaQuery 
-					ORDER BY q.codQuestao DESC OFFSET ($p-1) ROWS FETCH NEXT ($p * $pp) ROWS ONLY";
-					$result = odbc_exec($conn,$query);
-					/*$stmt = odbc_prepare($conn, "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
-					FROM questao q 
-					INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-					JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-					JOIN professor p ON q.codProfessor = p.codProfessor
-					ORDER BY codQuestao OFFSET (?-1) ROWS FETCH NEXT (? * ?) ROWS ONLY");
-					$result = odbc_execute($stmt, array($p, $p, $pp));
-					odbc_errormsg($conn);
-					print_r(odbc_fetch_array($stmt));*/
 					if(odbc_num_rows($result)>0){
 				?>
 			    <thead>
@@ -129,15 +115,15 @@ if (isset($_GET['busca'])) {
 					if (isset($_GET['d'])){
 						echo '<tr><th colspan="7">';
 						if($_GET['d']==1){
-							echo "Quest√£o deletada/desativada com sucesso!";
+							echo "Quest&atilde;o deletada/desativada com sucesso!";
 						}else{
-							echo "Erro ao tentar deletar/desativar a quest√£o.";
+							echo "Erro ao tentar deletar/desativar a quest&atilde;o.";
 						}
 						echo '</th></tr>';
 					}
 					?>
 			      <tr> 
-			        <th scope="col">Editar Quest√£o</th>
+			        <th scope="col">Editar Quest&atilde;o</th>
 			        <th scope="col">Enunciado</th>
 			        <th scope="col">Assunto</th>
 			        <th scope="col">Tipo</th>
@@ -157,10 +143,10 @@ if (isset($_GET['busca'])) {
 						<a href="update.php?cq=<?=$area["codQuestao"]?>" class="edit"></a>
 						<a href="delete.php?cq=<?=$area["codQuestao"]?>" class="delete"></a>
 			        </td>
-			        <td data-title=""><?=utf8_encode($area["textoQuestao"])?></td>
-			        <td data-title=""><?=utf8_encode($area["assunto"])?></td>
+			        <td data-title=""><?=$area["textoQuestao"]?></td>
+			        <td data-title=""><?=$area["assunto"]?></td>
 			        <td data-title="" data-type=""><?=$area["tipoquestao"]?></td>
-			        <td data-title="" data-type=""><?=utf8_encode($area["nome"])?></td>
+			        <td data-title="" data-type=""><?=$area["nome"]?></td>
 			        <td data-title="" data-type=""><?=$area["dificuldade"]?></td>
 			        <td data-title="" data-type=""><?=($area["ativo"])?'<div class="ativo"></div>':'<div class="desativo"></div>'?>
 			        </td>
@@ -169,10 +155,19 @@ if (isset($_GET['busca'])) {
 				</tbody>
 				<?php
 					} else {
-						echo "Nenhuma quest√£o foi encontrada!";
+						echo "Nenhuma quest„o foi encontrada!";
 					}
 				?>
 	  		</table>
+		</section>
+		<section>
+			<div>
+			<?php
+				for($j=1;$j<=($tt/$pp);$j++){
+					echo '<a href="questao.php?p='.$j.'">'.$j.'</a>';
+				}
+			?>
+			</div>
 		</section>
 	</div>
 </div>
