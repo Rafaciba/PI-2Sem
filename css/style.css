@@ -7,9 +7,6 @@ body {
 	border: 0;
 	font-family: 'Roboto', sans-serif;
 	background: #385965;
-	background: -webkit-linear-gradient(top left, #385965 0%, #00bbd4 100%);
-	background: -moz-linear-gradient(top left, #385965 0%, #00bbd4 100%);
-	background: -o-linear-gradient(top left, #385965 0%, #00bbd4 100%); 
 }
 /* Style Login */
 
@@ -151,10 +148,51 @@ body {
   margin-bottom: -23px;
 }
 
+.topLogo{
+  width: 100%;
+  margin: 10px 5px 130px 10px;
+  display: block;
+
+}
+
+.logo {
+  width: 100px;
+  position: absolute;
+  left: calc(50% - 50px);
+}
+
+.logo img {
+  max-width: 100px ;
+}
+
+.help {
+  width: 100px;
+  float: right;
+  margin: 20px 40px 0 0;
+  text-align: center;
+}
+
+.help a {
+  text-decoration: none;
+}
+
+.help p {
+  margin: 0;
+  color: #385965;
+  font-weight: 500;
+  text-align: left;
+}
+
+.help img {
+  width: 30px;
+  text-align: center;  
+}
+
 .menu {
+  display: block;
 	background-color: #385965;	
 	width: 950px; 
-  margin: 0 auto;
+  margin: 20px auto 0 auto;
 
 }
 
@@ -474,6 +512,7 @@ ul {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
+
 .tab-group {
   list-style: none;
   padding: 0;
@@ -719,10 +758,10 @@ input[type=checkbox], input[type=radio] {
   width: 100%;
 }
 
-.basic-slide form, input {
+.campoForm form, input {
   display: inline-block;
   width: 73%;
-  padding: 10px 0 10px 25px;
+  padding: 7px 0 10px 25px;
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
   color: #385965;
@@ -735,7 +774,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 
-.basic-slide  form, select {
+.campoForm  form, select {
   display: inline-block;
   width: 77%;
   padding: 10px 0 10px 19px;
@@ -746,16 +785,15 @@ input[type=checkbox], input[type=radio] {
   border: 0;
   border-radius: 3px;
   outline: 0;
-  text-indent: 0;
   margin-left: 140px;
   
 }
 
-.basic-slide form, textarea {
+.campoForm form, textarea {
   resize: none;
   display: block;
   width: 94%;
-  padding: 10px 0 60px 40px;
+  padding: 10px 0 60px 20px;
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
   color: #385965;
@@ -767,13 +805,13 @@ input[type=checkbox], input[type=radio] {
   margin-left: 0px;
 }
 
-.basic-slide::-webkit-input-placeholder { 
+.campoForm::-webkit-input-placeholder { 
   font-family: 'Roboto', sans-serif;
   text-indent: 0;
   font-weight: 300; 
   color: #385965;
 }
-.basic-slide + label {
+.campoForm + label {
   display: inline-block;
   position: absolute;
   top: 0;
@@ -785,15 +823,14 @@ input[type=checkbox], input[type=radio] {
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
   width: 115px;
-  text-align: center;
 }
  
-.basic-slide form, label, p {
+.campoForm form, label, p {
   font-size: 12px;
   text-align: left;
 } 
 
-input.basic-slide.small {
+input.campoForm.small {
   width: 49%;
 }
 
@@ -801,21 +838,21 @@ label.pad {
     padding: 0px 15px;
 }
 
-.basic-slide + label.enunciado {
+.campoForm + label.enunciado {
   border-bottom-left-radius: 0px;
     border-top-right-radius: 3px;
 }
 
-.basic-slide:focus,
-.basic-slide:active {
+.campoForm:focus,
+.campoForm:active {
   color: #377D6A;
   text-indent: 0; 
   outline: 1px solid #00bbd4 ;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-.basic-slide:focus::-webkit-input-placeholder,
-.basic-slide:active::-webkit-input-placeholder {
+.campoForm:focus::-webkit-input-placeholder,
+.campoForm:active::-webkit-input-placeholder {
   color: #aaa;
 } 
 
@@ -844,7 +881,7 @@ label h3 {
   font-weight: 400;
 } 
 
-input.basic-slide.correta {
+input.campoForm.correta {
     width: auto;
     height: auto;
     margin-left: 0;
@@ -1077,4 +1114,152 @@ input.basic-slide.correta {
   max-width: 600px;
   margin: 10px;
 }
+
+.pagination {
+  display: block;
+  margin: 10px;
+}
+
+.pagination div>div {
+  text-align: center;
+  background: #385965;
+  display: inline-block;
+  min-width: 35px;
+  padding: 5px 0;
+  margin: 2px;
+  border: 0;
+  border-radius: 4px;
+}
+
+.pagination div>div:hover {
+  opacity: 0.7;
+}
+
+.pagination a {  
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 0 10px; 
+}
+
+.login  {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #385965;
+  background: -webkit-linear-gradient(top left, #385965 0%, #00bbd4 100%);
+  background: -moz-linear-gradient(top left, #385965 0%, #00bbd4 100%);
+  background: -o-linear-gradient(top left, #385965 0%, #00bbd4 100%); 
+}
+
+/*  Style Documentação */
+
+.documentacao {
+  background: #fff;
+  padding: 40px;
+  max-width: 600px;
+  margin: 40px auto;
+  border-top: 5px solid #385965;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+
+.documentacao h2 {
+  border-bottom: 1px solid #385965;
+  padding: 5px;
+  color: #385965;
+  font-weight: 500;
+  text-align: center;
+}
+
+
+.documentacao strong {
+  font-weight: 500;
+}
+
+.documentacao h3 {
+  color: #385965;
+  font-weight: 400;
+  margin: 0;
+}
+
+
+/*////////////////////////////////RAFAEL//////////////////*/
+
+.checkbox{
+	margin-left: 10px;	
+}
+
+.frmFiltro {
+	clear: both;
+	padding: 5px;	
+}
+
+.frmFiltro input, .frmFiltro select {
+	width: auto;
+	display: inline-block;
+  	font-family: 'Roboto', sans-serif;
+  	font-weight: 400;
+  	color: #385965;
+  	background: #efefef;
+  	border: 0;
+  	border-radius: 3px;
+	padding: 5px;
+  	outline: 0;
+	margin: 0;
+}
+
+input[type=radio   ]:not(old){
+  width     : 2em;
+  margin    : 0;
+  padding   : 0;
+  font-size : 1em;
+  opacity   : 0;
+}
+
+input[type=radio   ]:not(old) + label{
+  display      : inline-block;
+  margin-left  : -2em;
+  line-height  : 1.5em;
+}
+
+input[type=radio   ]:not(old) + label > span{
+  display          : inline-block;
+  width            : 1.43em;
+  height           : 1.43em;
+  margin           : 0.25em 0.5em 0.25em 0.25em;
+  border           : 0.125em solid rgb(56,89,101);
+  border-radius    : 0.72em;
+  background       : rgb(157,20,30);
+  background-image :    -moz-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image :     -ms-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image :      -o-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image : -webkit-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image :         linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  vertical-align   : middle;
+}
+
+input[type=radio   ]:not(old):checked + label > span{
+  background-image :    -moz-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image :     -ms-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image :      -o-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image : -webkit-linear-gradient(rgb(255,255,255),rgb(255,255,255));
+  background-image :         linear-gradient(rgb(255,255,255),rgb(255,255,255));
+}
+
+input[type=radio]:not(old):checked + label > span > span{
+  display: block;
+  width: 0.9em;
+  height: 0.9em;
+  margin: 0.15em 0px 0px 0.2em;
+  border: 0.0625em solid #385965;
+  border-radius: 0.5em;
+  background-image :    -moz-linear-gradient(rgb(56,89,101),rgb(56,89,101));
+  background-image :     -ms-linear-gradient(rgb(56,89,101),rgb(56,89,101));
+  background-image :      -o-linear-gradient(rgb(56,89,101),rgb(56,89,101));
+  background-image : -webkit-linear-gradient(rgb(56,89,101),rgb(56,89,101));
+  background-image :         linear-gradient(rgb(56,89,101),rgb(56,89,101));
+}
+
 

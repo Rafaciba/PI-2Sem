@@ -3,7 +3,7 @@
 include("config/database.php");
 include("config/session.php");
 include("config/func.php");
-include("func/alterar.php");
+include("func/view.php");
 
 ?>
 <!DOCTYPE html>
@@ -30,13 +30,13 @@ include("func/alterar.php");
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
                 	<div class="field-wrap">
 						  <span>
-						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao"><?=$questao['textoQuestao']?></textarea>  
+						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao" disabled><?=$questao['textoQuestao']?></textarea>  
 						  		<label class="enunciado" for="Enunciado">Enunciado</label> 
 						  </span> 	  
 					</div>					
 					<div class="field-wrap">
 						<span>
-							<select class="campoForm" name="assunto">
+							<select class="campoForm" name="assunto" disabled>
 								<?php
 									$queryA = "SELECT codAssunto, descricao FROM assunto ORDER BY descricao ASC";
 									$resultAs = odbc_exec($conn,$queryA);
@@ -56,7 +56,7 @@ include("func/alterar.php");
 					</div>
 					<div class="field-wrap">
 						<span>
-							<select class="campoForm" name="tipoQuestao" id="tipoQuestao">
+							<select class="campoForm" name="tipoQuestao" id="tipoQuestao" disabled>
 								<?php
 									$queryT = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao ASC";
 									$resultT = odbc_exec($conn,$queryT);
@@ -76,7 +76,7 @@ include("func/alterar.php");
 					</div>
 					<div class="field-wrap">
 						<span> 
-							<select class="campoForm" name="dificuldade">
+							<select class="campoForm" name="dificuldade" disabled>
 								<option value="F" <?=($questao['dificuldade']=='F')?"selected":""?>>F&aacute;cil</option>
 								<option value="M" <?=($questao['dificuldade']=='M')?"selected":""?>>M&eacute;dio</option>
 								<option value="D" <?=($questao['dificuldade']=='D')?"selected":""?>>Dif&iacute;cil</option>
@@ -86,7 +86,7 @@ include("func/alterar.php");
 					</div>
 					<div class="field-wrap">
 						<span>							
-							<input class="campoForm" type="text" name="titImagem" maxlength="50" size="50" value="<?=$questao['tituloImagem']?>">
+							<input class="campoForm" type="text" name="titImagem" maxlength="50" size="50" value="<?=$questao['tituloImagem']?>" disabled>
 							<label for="Titulo da Imagem">T&iacute;tulo da imagem:</label>
 						</span>	
 					</div>
@@ -94,12 +94,6 @@ include("func/alterar.php");
 						<div>
 							<img class="img-up" src="data:image/jpeg;base64,<?=base64_encode($questao['bitmapImagem'])?>">
 						</div>
-					</div>
-					<div class="field-wrap">	
-						<span>
-							<input class="campoForm" type="file" name="imagemQuestao">
-							<label for="alterar imagem">Alterar Imagem:</label> 							
-						</span>	
 					</div>
 					<?php
 						$resultA = odbc_exec($conn, "SELECT * FROM alternativa WHERE codQuestao = $codQuestao");
@@ -120,21 +114,17 @@ include("func/alterar.php");
 								<div>
 									<div class="field-wrap">
 										<span>
-                                            <input type="text"  class="campoForm small" name="alternativa_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>">
+                                            <input type="text"  class="campoForm small" name="alternativa_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>" disabled>
 											<label class="pad"><p>Texto da alternativa</p></label>  
 										</span> 
 									</div>	
 									<div class="field-wrap right"> 
 										<label><h3>Correta</h3></label>
-										<input type="checkbox" name="correta_<?=$j?>" value="1" class="checkbox" <?=($alternativa['correta']==1)?"checked":""?> /> 
+										<input type="checkbox" name="correta_<?=$j?>" value="1" class="checkbox" <?=($alternativa['correta']==1)?"checked":""?> disabled> 
 									</div>
 								</div>	
                                 <?php } ?> 
 						 	</div>
-						<div>
-							<button id="addAlternativa" class="addAlternativa" name="addAlternativa">Adicionar alternativa</button>
-							<button id="rmvAlternativa" class="rmvAlternativa" name="rmvAlternativa">Remover alternativa</button> 
-						</div>
 					</div>
 					<?php }else if ($questao['codTipoQuestao']=='T') { ?>
                     <div id="textoObjetivo">
@@ -142,14 +132,10 @@ include("func/alterar.php");
 						<div id="txtRows">
 							<div class="field-wrap">
 								<span>
-                                	<input type="text" class="campoForm" name="resposta_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>">
+                                	<input type="text" class="campoForm" name="resposta_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>" disabled>
 									<label class="pad"><p>Texto da resposta</p></label>  
 								</span> 
 							</div> 
-						</div>	
-						<div>
-							<button id="addResposta" class="addAlternativa" name="addResposta">Adicionar resposta</button>
-							<button id="rmvResposta" class="rmvAlternativa" name="rmvResposta">Remover resposta</button>
 						</div>
 					</div>
 					<?php }else if($questao['codTipoQuestao']=='V') { 
@@ -160,24 +146,23 @@ include("func/alterar.php");
                         <div>
                             <div class="field-wrap">
                                 <span>
-                                    <input type="text" class="campoForm small" name="respostaVF" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>">
+                                    <input type="text" class="campoForm small" name="respostaVF" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>" disabled>
                                     <label class="pad"><p>Texto da resposta</p></label>  
                                 </span> 
                             </div>  
                             <div class="field-wrap true"> 
                                 <label><h3>Verdadeira:</h3></label> 
-                                <div><input type="radio" id="verdadeira" name="correta" value="1" <?=($alternativa['correta']==1)?"checked":""?>><label for="verdadeira"><span><span></span></span></label></div>
+                                <div><input type="radio" id="verdadeira" name="correta" value="1" <?=($alternativa['correta']==1)?"checked":""?> disabled><label for="verdadeira"><span><span></span></span></label></div>
                             </div> 
                             <div class="field-wrap false"> 
                                 <label><h3>Falsa:</h3></label> 
-                                <div><input type="radio" id="falsa" name="correta" value="0" <?=($alternativa['correta']==1)?"checked":""?>><label for="falsa"><span><span></span></span></label></div>
+                                <div><input type="radio" id="falsa" name="correta" value="0" <?=($alternativa['correta']==1)?"checked":""?> disabled><label for="falsa"><span><span></span></span></label></div>
                             </div>
                         </div>
 					</div>
 					<?php } ?>
 					<br><br>
-					<input type="submit" value="Salvar" name="cadastrar" class="button-cadastrar button-block">
-					<a href="questao.php" class="button-cancelar button-block"/>Cancelar</a>
+					<a href="questao.php" class="button-cancelar button-block"/>Voltar</a>
 				</form>
 	        </div>
 	        

@@ -14,9 +14,14 @@ $codQuestao = preg_replace("/[^0-9]/", "", $_GET['cq']);
 
 $integridade = odbc_exec($conn,"SELECT codEvento FROM QuestaoEvento WHERE codQuestao = $codQuestao");
 
+//BEGIN TRANSACTION
+$transaction = odbc_exec($conn,"BEGIN TRANSACTION DELQ");
+
 if (odbc_num_rows($integridade) > 0){
+	$d = 1;
 	$stmt = odbc_prepare($conn,"UPDATE questao SET ativo = 0 WHERE codQuestao = ?");
 }else{
+	$d = 2;
 	$stmtAlt = odbc_prepare($conn,"DELETE FROM alternativa WHERE codQuestao = ?");
 	$del = odbc_execute($stmtAlt, array($codQuestao));
 	
@@ -34,7 +39,12 @@ if ($imagem["codImagem"]!=NULL) {
 
 $result = odbc_execute($stmt, array($codQuestao));
 
-header("Location: questao.php?d=$result");
+if (!$result) {$d=0;}
+
+//COMMIT TRANSACTION
+$transaction = odbc_exec($conn,"COMMIT TRANSACTION DELQ");
+
+header("Location: questao.php?d=$d");
 exit;
 
 ?>

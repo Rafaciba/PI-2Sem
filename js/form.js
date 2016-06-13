@@ -48,19 +48,17 @@ $(function(){
 	$('#addAlternativa').click(function(){
 		qtdAlt++;
 		frmQuestao.qtdAlternativas.value = qtdAlt;
-		$('#alternativas table').append('<tr><td>'+qtdAlt+
-										'</td><td><input type="text" name="alternativa_'+qtdAlt+
-										'" maxlength="250" size="80"></td><td><input type="checkbox" name="correta_'+qtdAlt+
-										'" value="1"></td></tr>');
+		$('#altRows').append('<div><div class="field-wrap"><span><input type="text" class="campoForm small" name="alternativa_'+qtdAlt+
+										'" maxlength="250" size="80"><label class="pad"><p>Texto da alternativa</p></label></span></div><div class="field-wrap right"><label><h3>Correta</h3></label><input type="checkbox" name="correta_'+qtdAlt+
+										'" value="1" class="checkbox" /></div></div>');
 		return false;
 	});
 	
 	$('#addResposta').click(function(){
 		qtdResp++;
 		frmQuestao.qtdAlternativas.value = qtdResp;
-		$('#textoObjetivo table').append('<tr><td>'+qtdResp+
-										'</td><td><input type="text" name="resposta_'+qtdResp+
-										'" maxlength="250" size="80"></td></tr>');
+		$('#txtRows').append('<div class="field-wrap"><span><input type="text" class="campoForm" name="resposta_'+qtdResp+
+							'" maxlength="250" size="80"><label class="pad"><p>Texto da resposta</p></label></span></div>');
 		return false;
 	});
 	
@@ -68,7 +66,7 @@ $(function(){
 		if(qtdAlt>1){
 			qtdAlt--;
 			frmQuestao.qtdAlternativas.value = qtdAlt;
-			$('#alternativas tr').last().remove();
+			$('#altRows>div').last().remove();
 		}
 		return false;
 	});
@@ -77,21 +75,19 @@ $(function(){
 		if(qtdResp>1){
 			qtdResp--;
 			frmQuestao.qtdAlternativas.value = qtdResp;
-			$('#textoObjetivo tr').last().remove();
+			$('#txtRows>div').last().remove();
 		}
 		return false;
 	});
-<<<<<<< HEAD
 
 	//checado
-	$(".checkbox").change(function(){
-		if($(".checkbox").attr("checked")){
-			$(".checkbox").attr("checked","false");
+	/*$(".checkbox").change(function(){
+		if($(this).attr("checked")){
+			$(this).attr("checked",false)
 		}else{
-			$(".checkbox").attr("checked","checked");
+			$(".checkbox").attr("checked",false);
+			$(this).attr("checked","checked");
 		}
-	});	
+	});	*/
 
-=======
->>>>>>> origin/master
 })

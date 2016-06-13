@@ -2,6 +2,10 @@
 
 include("config/session.php");
 
+//INTEGRAÇÃO
+include('integracao/loginFunc.php');
+lidaBasicAuthentication ('../../portal/naoautorizado.php'); 
+
 if (isset($_GET["i"])&&($_GET["i"]==1)) {
 	$msg = "Usuário ou senha inválidos!";
 }else {
@@ -25,7 +29,7 @@ if (isset($_SESSION["codProfessor"])){
 	<title>PI - SENAC</title>
 </head>
 
-<body>
+<body class="login">
  	<div class="wrapper">
  		<div class="container"> 
  			<div class="title">

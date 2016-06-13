@@ -3,89 +3,14 @@
 include("config/database.php");
 include("config/session.php");
 include("config/func.php");
-
-if (isset($_POST["loginButton"])){
-
-	$email = $_POST['user'];
-	$senha = $_POST['pass'];
-	//requisição para verificar se o email e senha existem no banco de dados e coleta suas informações se o mesmo existir
-	$query = "  SELECT *
-				FROM
-				professor
-				WHERE email = '$email' AND senha = HASHBYTES('SHA1', '$senha')";
-
-
-	//executa a requisição no banco de dados
-	$result = odbc_exec($conn,$query);
-	//recebe o número de linhas de resultado retornadas
-	$login = odbc_num_rows($result);
-	
-	if($login>0){//se existem resultados é TRUE
-		$credenciais = odbc_fetch_array($result);//passa o resultado encontrado para um array
-		
-		//passa os valores necessários para as variáveis globais
-		$_SESSION["showMenu"] = TRUE;
-		$_SESSION["codProfessor"]=$credenciais["codProfessor"];
-		$_SESSION["nomeProfessor"]=$credenciais["nome"];
-		$_SESSION["tipoProfessor"]=$credenciais["tipo"];
-	}else{
-		//caso não tenha resultados volta para a index informando que houve erro no login
-		header("Location: index.php?i=1"); exit;
-	}
-	
-} else if(!isset($_SESSION["codProfessor"])){
-	//caso o usuário chegou a essa página sem ser pelo formulário e não está logado, volta para a index
-	header("Location: index.php"); exit;	
-}
-
-if (isset($_GET['p'])) {
-	$p = $_GET['p'];
-}else {
-	$p = 1;	
-}
-
-if (isset($_GET['pp'])) {
-	$pp = $_GET['pp'];
-}else{
-	$pp = 20;
-}
-
-$totalQuery = odbc_exec($conn,"SELECT count(*) as total FROM questao q 
-			INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-			JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-			JOIN professor p ON q.codProfessor = p.codProfessor");
-$totalQst = odbc_fetch_array($totalQuery);
-
-$tt = $totalQst['total'];
-
-if (isset($_GET['ordem'])) {
-	$ordem = $_GET['ordem'];
-}else{
-	$ordem = "codQuestao";
-}
-
-if (isset($_GET['busca'])) {
-	$busca = $_GET['busca'];
-	$buscaQuery = "WHERE textoQuestao LIKE '%$busca%' OR assunto LIKE '%$busca%' OR tipoquestao LIKE '%$busca%' OR nome LIKE '%$busca%' OR dificuldade LIKE '%$busca%'";
-}else{
-	$buscaQuery = "";
-}
-
-$query = "SELECT q.codQuestao, q.textoQuestao, q.ativo, q.dificuldade, q.codProfessor, a.descricao AS assunto, tq.descricao AS tipoquestao, p.nome
-			FROM questao q 
-			INNER JOIN assunto a ON q.codAssunto = a.codAssunto
-			JOIN tipoquestao tq ON q.codTipoQuestao = tq.codTipoQuestao
-			JOIN professor p ON q.codProfessor = p.codProfessor 
-			$buscaQuery 
-			ORDER BY q.codQuestao DESC OFFSET (".(($pp * $p) - $pp).") ROWS FETCH NEXT (".$pp.") ROWS ONLY";
-$result = odbc_exec($conn,$query);
+include("func/listar.php");
 
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="iso-8859-1">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'> 
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
@@ -94,7 +19,7 @@ $result = odbc_exec($conn,$query);
 <title>PI - SENAC</title>
 </head>
 
-<body style="background-color: #385965;">
+<body>
 <?php include("menu.php"); ?>
 <div class="content total">
 	<div class="content white">
@@ -105,23 +30,53 @@ $result = odbc_exec($conn,$query);
 			<div class="listagem-question">
 				Listagem das Quest&otilde;es
 			</div>
+            <div>
+            	<?php
+				  if (isset($_GET['d'])){
+					  echo '<div class="error">';
+					  switch($_GET['d']){
+						  case 0: echo "Erro ao tentar deletar/desativar a quest&atilde;o."; break;
+						  case 1: echo "Quest&atilde;o desativada com sucesso!"; break;
+						  case 2: echo "Quest&atilde;o deletada com sucesso!"; break;
+					  }
+					  echo '</div>';
+				  }
+				?>
+            </div>
+            <div class="frmFiltro">
+            	<div>
+                	<label for="ordem">Ordenar por:</label>
+                	<select name="ordem" id="ordem">
+                    	<option value="maisRecente" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="maisRecente")?"selected":""?>>Mais recente</option>
+                        <option value="maisAntigo" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="maisAntigo")?"selected":""?>>Mais antigo</option>
+                        <option value="alfabetico" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="alfabetico")?"selected":""?>>A - Z</option>
+                        <option value="alfabetico2" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="alfabetico2")?"selected":""?>>Z - A</option>
+                        <option value="assunto" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="assunto")?"selected":""?>>Assunto</option>
+                        <option value="tipoQuestao" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="tipoQuestao")?"selected":""?>>Tipo da quest&atilde;o</option>
+                        <option value="professor" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="professor")?"selected":""?>>Professor</option>
+                        <option value="dificuldade" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="dificuldade")?"selected":""?>>Dificuldade</option>
+                        <option value="ativo" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="ativo")?"selected":""?>>Ativo</option>
+                    </select>
+                    <label for="pp">Quest&otilde;es p/ P&aacute;g.;</label>
+                    <select name="pp" id="pp">
+                    	<option value="10" <?=($pp=="10")?"selected":""?>>10</option>
+                        <option value="20" <?=($pp=="20")?"selected":""?>>20</option>
+                        <option value="30" <?=($pp=="30")?"selected":""?>>30</option>
+                        <option value="40" <?=($pp=="40")?"selected":""?>>40</option>
+                        <option value="50" <?=($pp=="50")?"selected":""?>>50</option>
+                        <option value="60" <?=($pp=="60")?"selected":""?>>60</option>
+                        <option value="70" <?=($pp=="70")?"selected":""?>>70</option>
+                        <option value="80" <?=($pp=="80")?"selected":""?>>80</option>
+                        <option value="90" <?=($pp=="90")?"selected":""?>>90</option>
+                        <option value="100" <?=($pp=="100")?"selected":""?>>100</option>
+                    </select>
+                </div>
+            </div>
 			<table class="responsive-table">  
 				<?php 
 					if(odbc_num_rows($result)>0){
 				?>
 			    <thead>
-				  
-					<?php
-					if (isset($_GET['d'])){
-						echo '<tr><th colspan="7">';
-						if($_GET['d']==1){
-							echo "Quest&atilde;o deletada/desativada com sucesso!";
-						}else{
-							echo "Erro ao tentar deletar/desativar a quest&atilde;o.";
-						}
-						echo '</th></tr>';
-					}
-					?>
 			      <tr> 
 			        <th scope="col">Editar Quest&atilde;o</th>
 			        <th scope="col">Enunciado</th>
@@ -140,8 +95,12 @@ $result = odbc_exec($conn,$query);
 				  ?>
 			      <tr> 
 			        <td data-title="">
+                    	<?php if($_SESSION["tipoProfessor"]=="A"||$_SESSION["codProfessor"]==$area["codProfessor"]){ ?>
 						<a href="update.php?cq=<?=$area["codQuestao"]?>" class="edit"></a>
 						<a href="delete.php?cq=<?=$area["codQuestao"]?>" class="delete"></a>
+                        <?php }else{ ?>
+                        <a href="view.php?cq=<?=$area["codQuestao"]?>" class="view"></a>
+                        <?php } ?>
 			        </td>
 			        <td data-title=""><?=$area["textoQuestao"]?></td>
 			        <td data-title=""><?=$area["assunto"]?></td>
@@ -155,18 +114,23 @@ $result = odbc_exec($conn,$query);
 				</tbody>
 				<?php
 					} else {
-						echo "Nenhuma questão foi encontrada!";
+						echo "<div>Nenhuma quest&atilde;o foi encontrada!</div>";
 					}
 				?>
 	  		</table>
 		</section>
 		<section>
-			<div>
-			<?php
-				for($j=1;$j<=($tt/$pp);$j++){
-					echo '<a href="questao.php?p='.$j.'">'.$j.'</a>';
-				}
-			?>
+			<div class="pagination" align="center">
+				<div>
+					<?php
+						for($j=1;$j<=($tt/$pp);$j++){
+							if ($j%21==0) {
+								echo "</div><div>";
+							}
+							echo '<div><a href="questao.php?p='.$j.'&pp='.$pp.'">'.$j.'</a></div>';
+						}
+					?>
+				</div>
 			</div>
 		</section>
 	</div>

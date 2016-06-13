@@ -43,14 +43,13 @@ include("func/adicionar.php");
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
 					<div class="field-wrap">
 						  <span>
-						  		<textarea  class="basic-slide" maxlength="300" name="textoQuestao" id="textoQuestao">						  			
-						  		</textarea>  
+						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao"></textarea>  
 						  		<label class="enunciado" for="Enunciado">Enunciado</label> 
 						  </span> 	  
 					</div>
 					<div class="field-wrap">
 						<span> 						
-							<select class="basic-slide" name="assunto">
+							<select class="campoForm" name="assunto">
 								<?php
 									$query = "SELECT codAssunto, descricao FROM assunto ORDER BY descricao ASC";
 									$result = odbc_exec($conn,$query);
@@ -65,9 +64,9 @@ include("func/adicionar.php");
 					</div>
 					<div class="field-wrap">
 						<span> 
-							<select class="basic-slide" name="tipoQuestao" id="tipoQuestao">
+							<select class="campoForm" name="tipoQuestao" id="tipoQuestao">
 								<?php
-									$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao DESC";
+									$query = "SELECT codTipoQuestao, descricao FROM tipoquestao ORDER BY descricao";
 									$result = odbc_exec($conn,$query);
 									if(odbc_num_rows($result)>0){
 										while($tipoQuestao = odbc_fetch_array($result)){
@@ -81,7 +80,7 @@ include("func/adicionar.php");
 					</div>
 					<div class="field-wrap">
 						<span> 						 
-							<select class="basic-slide" name="dificuldade">
+							<select class="campoForm" name="dificuldade">
 								<option value="F">F&aacute;cil</option>
 								<option value="M">M&eacute;dio</option>
 								<option value="D">Dif&iacute;cil</option>
@@ -91,37 +90,33 @@ include("func/adicionar.php");
 					</div>	
 					<div class="field-wrap">
 						<span> 
-							<input class="basic-slide" type="file" name="imagemQuestao">
+							<input class="campoForm" type="file" name="imagemQuestao">
 							<label for="imagem">Imagem:</label> 
 						</span> 
 					</div>
 					<div class="field-wrap">
 						<span> 
-							<input class="basic-slide" type="text" name="titImagem" maxlength="50" size="50">
+							<input class="campoForm" type="text" name="titImagem" maxlength="50" size="50">
 							<label class="pad" for="titulo da imagem"><p>T&iacute;tulo da imagem:</p></label>
 						</span> 
 					</div>	
 					<input type="hidden" name="qtdAlternativas" id="qtdAlternativas" value="1">
 					<div id="alternativas">
 						<h4>Alternativas</h4>
-							<div id="AltRows">
-								<div>
-									<div class="field-wrap">
-										<span>  
-											<input type="text" class="basic-slide small" name="alternativa_1" maxlength="250" size="80">
-											<label class="pad"><p>Texto da alternativa</p></label>  
-										</span> 
-									</div>	
-									<div class="field-wrap right"> 
-										<label><h3>Correta</h3></label> 
-										<div class="switch">
-										  <input type="checkbox" id="c1" name="correta_1" value="1" class="checkbox" />
-										  <label for="c1"></label>
-										</div>
-										<!-- <input type="checkbox" class="basic-slide correta" name="correta_1" value="1"> -->	 
-									</div>
-								</div>	 
-						 	</div>
+                        <div id="altRows">
+                            <div>
+                                <div class="field-wrap">
+                                    <span>  
+                                        <input type="text" class="campoForm small" name="alternativa_1" maxlength="250" size="80">
+                                        <label class="pad"><p>Texto da alternativa</p></label>  
+                                    </span> 
+                                </div>	
+                                <div class="field-wrap right"> 
+                                    <label><h3>Correta</h3></label>
+                                    <input type="checkbox" name="correta_1" value="1" class="checkbox" />
+                                </div>
+                            </div>	 
+                        </div>
 						<div>
 							<button id="addAlternativa" class="addAlternativa" name="addAlternativa">Adicionar alternativa</button>
 							<button id="rmvAlternativa" class="rmvAlternativa" name="rmvAlternativa">Remover alternativa</button> 
@@ -129,13 +124,13 @@ include("func/adicionar.php");
 					</div>
 					<div id="textoObjetivo">
 						<h4>Respostas</h4>
-						<div id="AltRows">
+						<div id="txtRows">
 							<div class="field-wrap">
 								<span>  
-									<input type="text" class="basic-slide" name="resposta_1" maxlength="250" size="80">
+									<input type="text" class="campoForm" name="resposta_1" maxlength="250" size="80">
 									<label class="pad"><p>Texto da resposta</p></label>  
 								</span> 
-							</div> 
+							</div>
 						</div>	
 						<div>
 							<button id="addResposta" class="addAlternativa" name="addResposta">Adicionar resposta</button>
@@ -146,23 +141,17 @@ include("func/adicionar.php");
 						<h4>Resposta</h4>
 						<div class="field-wrap">
 							<span>  
-								<input type="text" class="basic-slide small" name="respostaVF" maxlength="250" size="80">
+								<input type="text" class="campoForm small" name="respostaVF" maxlength="250" size="80">
 								<label class="pad"><p>Texto da resposta</p></label>  
 							</span> 
 						</div>  
 						<div class="field-wrap true"> 
 							<label><h3>Verdadeira:</h3></label> 
-							<div class="btnRadio">
-						 		<input type="radio" id="true-radio" name="verdadeira" value="1" class="checkbox">
-							  <label for="true-radio"></label>
-							</div> 
+                            <div><input type="radio" id="verdadeira" name="correta"><label for="verdadeira"><span><span></span></span></label></div>
 						</div> 
 						<div class="field-wrap false"> 
 							<label><h3>Falsa:</h3></label> 
-							<div class="btnRadio">
-						 		<input type="checkbox" id="false-radio" name="falsa" value="0" class="checkbox">
-							  <label for="false-radio"></label>
-							</div> 
+                            <div><input type="radio" id="falsa" name="correta"><label for="falsa"><span><span></span></span></label></div>
 						</div>  
 					</div>
 					<br><br>
