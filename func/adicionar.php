@@ -42,7 +42,7 @@ if (isset($_POST['cadastrar'])){
 		for ($i=1;$i<=$_POST['qtdAlternativas'];$i++) {
 			$stmt = odbc_prepare($conn,"INSERT INTO alternativa (codQuestao, codAlternativa,textoAlternativa,correta) VALUES (?,?,?,?)");
 				
-			if (!isset($_POST['correta_'.$i])){$correta=0;}else{$correta=$_POST['correta_'.$i];}
+			if ($_POST['correta']==$i){$correta=1;}else{$correta=0;}
 			switch($_POST['tipoQuestao']){
 				case "A": 
 					$arr = array($insertQuestao['codQuestao'],$i,$_POST['alternativa_'.$i],$correta);
@@ -57,6 +57,10 @@ if (isset($_POST['cadastrar'])){
 			$result = odbc_execute($stmt, $arr);
 		}
 		$commit = odbc_exec($conn,"COMMIT TRANSACTION ADDQ");
+		if ($commit) {
+			header("Location: questao.php?s=3");
+			exit;
+		}
 	}
 }
 ?>

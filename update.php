@@ -14,6 +14,7 @@ include("func/alterar.php");
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="js/javascript.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
  
 <title>PI - SENAC</title>
 </head>
@@ -25,6 +26,13 @@ include("func/alterar.php");
 		<div class="cadastro">
 	      <div class="tab-content">
 	        <div id="signup">
+            <?php 
+			  if(isset($commit)) {
+				  if (!$commit) {
+				  	echo '<p class="error">Ocorreu um erro ao salvar as altera&ccedil;&otilde;es. Tente novamente.</p>';
+				  }
+			  } 
+			  ?>
 	          <span class="title-cadastro">Alterar Quest&atilde;o</span>
 	          <br><br>
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
@@ -126,7 +134,7 @@ include("func/alterar.php");
 									</div>	
 									<div class="field-wrap right"> 
 										<label><h3>Correta</h3></label>
-										<input type="checkbox" name="correta_<?=$j?>" value="1" class="checkbox" <?=($alternativa['correta']==1)?"checked":""?> /> 
+                                        <div><input type="radio" name="correta" id="correta_<?=$j?>" value="<?=$j?>" <?=($alternativa['correta']==1)?"checked":""?> required><label for="correta_<?=$j?>"><span><span></span></span></label></div>
 									</div>
 								</div>	
                                 <?php } ?> 

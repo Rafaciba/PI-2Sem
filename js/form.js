@@ -48,9 +48,7 @@ $(function(){
 	$('#addAlternativa').click(function(){
 		qtdAlt++;
 		frmQuestao.qtdAlternativas.value = qtdAlt;
-		$('#altRows').append('<div><div class="field-wrap"><span><input type="text" class="campoForm small" name="alternativa_'+qtdAlt+
-										'" maxlength="250" size="80"><label class="pad"><p>Texto da alternativa</p></label></span></div><div class="field-wrap right"><label><h3>Correta</h3></label><input type="checkbox" name="correta_'+qtdAlt+
-										'" value="1" class="checkbox" /></div></div>');
+		$('#altRows').append('<div><div class="field-wrap"><span><input type="text" class="campoForm small" name="alternativa_'+qtdAlt+'" maxlength="250" size="80"><label class="pad"><p>Texto da alternativa</p></label></span></div><div class="field-wrap right"><label><h3>Correta</h3></label><div><input type="radio" name="correta" id="correta_'+qtdAlt+'" value="'+qtdAlt+'" required><label for="correta_'+qtdAlt+'"><span><span></span></span></label></div></div></div>');
 		return false;
 	});
 	
@@ -79,15 +77,4 @@ $(function(){
 		}
 		return false;
 	});
-
-	//checado
-	/*$(".checkbox").change(function(){
-		if($(this).attr("checked")){
-			$(this).attr("checked",false)
-		}else{
-			$(".checkbox").attr("checked",false);
-			$(this).attr("checked","checked");
-		}
-	});	*/
-
 })

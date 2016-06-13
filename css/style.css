@@ -858,20 +858,20 @@ label.pad {
 
 .field-wrap.right {
     float: right;
-    margin-top: -104px;
+    margin-top: -115px;
     width: 100px;
 }
 
 .field-wrap.true {
     float: left;
-    margin-top: -104px;
+    margin-top: -115px;
     width: 100px;
     margin-left: 480px;
 }
 
 .field-wrap.false {
     float: right;
-    margin-top: -104px;
+    margin-top: -115px;
     width: 50px;
     /* margin-left: 10px; */
     margin-right: -15px;
@@ -1092,13 +1092,15 @@ input.campoForm.correta {
 }
 
 
-.sucess {
+.success {
   background-color: #77E371;
   color: #fff;
   padding: 10px;
   font-size: 16px;
   font-weight: 400;
-  width: 460px;
+  width: 98%;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .error {
@@ -1107,7 +1109,9 @@ input.campoForm.correta {
   padding: 10px;
   font-size: 16px;
   font-weight: 400;
-  width: 460px;
+  width: 98%;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .img-up {
@@ -1187,6 +1191,10 @@ input.campoForm.correta {
 
 /*////////////////////////////////RAFAEL//////////////////*/
 
+#altRows>div {
+	clear: both;
+}
+
 .checkbox{
 	margin-left: 10px;	
 }
@@ -1252,7 +1260,7 @@ input[type=radio]:not(old):checked + label > span > span{
   display: block;
   width: 0.9em;
   height: 0.9em;
-  margin: 0.15em 0px 0px 0.2em;
+  margin: 0.18em 0px 0px 0.2em;
   border: 0.0625em solid #385965;
   border-radius: 0.5em;
   background-image :    -moz-linear-gradient(rgb(56,89,101),rgb(56,89,101));

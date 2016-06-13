@@ -44,7 +44,7 @@ if (!$result) {$d=0;}
 //COMMIT TRANSACTION
 $transaction = odbc_exec($conn,"COMMIT TRANSACTION DELQ");
 
-header("Location: questao.php?d=$d");
+header("Location: questao.php?s=$d");
 exit;
 
 ?>

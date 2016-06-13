@@ -20,7 +20,7 @@
 				<div class="help">
 					<a href="documentacao.php">
 						<img src="img/information.png" alt="Informações" border="0">
-						<p>Documentação</p>
+						<p>Documenta&ccedil;&atilde;o</p>
 					</a>	
 				</div>
 			</div>

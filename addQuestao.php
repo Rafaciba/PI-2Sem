@@ -4,6 +4,7 @@ include("config/database.php");
 include("config/session.php");
 include("config/func.php");
 include("func/adicionar.php");
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,7 +12,6 @@ include("func/adicionar.php");
 <meta charset="ISO-8859-1">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="js/javascript.js"></script>
 <script type="text/javascript" src="js/form.js"></script>
@@ -27,15 +27,12 @@ include("func/adicionar.php");
 	      <div class="tab-content">
 	        <div id="signup">   
 			  <?php 
-			  if(isset($result)) {
-				  if ($result) {
-				  	echo "<p class='sucess'>Questão cadastrada com sucesso!</p>";
-				  }else{
-				  	echo "<p class='error'>Ocorreu um erro ao cadastrar a questão. Tente novamente.</p>";
+			  if(isset($commit)) {
+				  if (!$commit) {
+				  	echo '<p class="error">Ocorreu um erro ao cadastrar a quest&atilde;o. Tente novamente.</p>';
 				  }
 			  } 
 			  ?>
-
 	          <span class="title-cadastro">Cadastro de Quest&otilde;es</span> 
 
 	          <br><br>
@@ -43,7 +40,7 @@ include("func/adicionar.php");
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
 					<div class="field-wrap">
 						  <span>
-						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao"></textarea>  
+						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao" required></textarea>  
 						  		<label class="enunciado" for="Enunciado">Enunciado</label> 
 						  </span> 	  
 					</div>
@@ -107,13 +104,13 @@ include("func/adicionar.php");
                             <div>
                                 <div class="field-wrap">
                                     <span>  
-                                        <input type="text" class="campoForm small" name="alternativa_1" maxlength="250" size="80">
+                                        <input type="text" class="campoForm small" name="alternativa_1" maxlength="250" size="80" required>
                                         <label class="pad"><p>Texto da alternativa</p></label>  
                                     </span> 
                                 </div>	
                                 <div class="field-wrap right"> 
                                     <label><h3>Correta</h3></label>
-                                    <input type="checkbox" name="correta_1" value="1" class="checkbox" />
+                                    <div><input type="radio" name="correta" id="correta_1" value="1" required><label for="correta_1"><span><span></span></span></label></div>
                                 </div>
                             </div>	 
                         </div>

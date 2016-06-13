@@ -25,7 +25,7 @@ include("config/func.php");
 <section>
 	<div class="content white">
 		<div class="documentacao">      
-	        <h2>Documenta&ccedil;&atilde;o</h2>
+	        <h2>Documenta&ccedil;&atilde;o do usu&aacute;rio</h2>
 			
 			<h3>
 			Como adicionar quest&otilde;es? </h3>	

@@ -32,14 +32,14 @@ include("func/listar.php");
 			</div>
             <div>
             	<?php
-				  if (isset($_GET['d'])){
-					  echo '<div class="error">';
-					  switch($_GET['d']){
-						  case 0: echo "Erro ao tentar deletar/desativar a quest&atilde;o."; break;
-						  case 1: echo "Quest&atilde;o desativada com sucesso!"; break;
-						  case 2: echo "Quest&atilde;o deletada com sucesso!"; break;
+				  if (isset($_GET['s'])){
+					  switch($_GET['s']){
+						  case 0: echo '<div class="error">Erro ao tentar deletar/desativar a quest&atilde;o.</div>'; break;
+						  case 1: echo '<div class="success">Quest&atilde;o desativada com sucesso!</div>'; break;
+						  case 2: echo '<div class="success">Quest&atilde;o deletada com sucesso!</div>'; break;
+						  case 3: echo '<div class="success">Quest&atilde;o cadastrada com sucesso!</div>'; break;
+						  case 4: echo '<div class="success">Quest&atilde;o alterada com sucesso!</div>'; break;
 					  }
-					  echo '</div>';
 				  }
 				?>
             </div>
@@ -57,7 +57,7 @@ include("func/listar.php");
                         <option value="dificuldade" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="dificuldade")?"selected":""?>>Dificuldade</option>
                         <option value="ativo" <?=(isset($_GET['ordem'])&&$_GET['ordem']=="ativo")?"selected":""?>>Ativo</option>
                     </select>
-                    <label for="pp">Quest&otilde;es p/ P&aacute;g.;</label>
+                    <label for="pp">Quest&otilde;es p/ P&aacute;g.:</label>
                     <select name="pp" id="pp">
                     	<option value="10" <?=($pp=="10")?"selected":""?>>10</option>
                         <option value="20" <?=($pp=="20")?"selected":""?>>20</option>
