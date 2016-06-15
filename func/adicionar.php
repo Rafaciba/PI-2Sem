@@ -1,5 +1,7 @@
 <?php 
 if (isset($_POST['cadastrar'])){
+	//DEIXA OS DADOS NO FORMATO CORRETO PARA O BD
+	$_POST = array_map('utf8_decode', $_POST);
 	//BEGIN TRANSACTION
 	$transaction = odbc_exec($conn,"BEGIN TRANSACTION ADDQ");
 	//IMAGEM
@@ -57,7 +59,7 @@ if (isset($_POST['cadastrar'])){
 			$result = odbc_execute($stmt, $arr);
 		}
 		$commit = odbc_exec($conn,"COMMIT TRANSACTION ADDQ");
-		if ($commit) {
+		if ($result) {
 			header("Location: questao.php?s=3");
 			exit;
 		}

@@ -9,7 +9,7 @@ include("func/adicionar.php");
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="utf-8">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
@@ -37,7 +37,7 @@ include("func/adicionar.php");
 
 	          <br><br>
 	          
-				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
+				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 					<div class="field-wrap">
 						  <span>
 						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao" required></textarea>  
@@ -52,7 +52,7 @@ include("func/adicionar.php");
 									$result = odbc_exec($conn,$query);
 									if(odbc_num_rows($result)>0){
 										while($assunto = odbc_fetch_array($result)){
-											echo '<option value="'.$assunto['codAssunto'].'">'.$assunto['descricao'].'</option>';
+											echo '<option value="'.$assunto['codAssunto'].'">'.utf8_encode($assunto['descricao']).'</option>';
 										}
 									}
 								?>
@@ -67,7 +67,7 @@ include("func/adicionar.php");
 									$result = odbc_exec($conn,$query);
 									if(odbc_num_rows($result)>0){
 										while($tipoQuestao = odbc_fetch_array($result)){
-											echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.$tipoQuestao['descricao'].'</option>';
+											echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.utf8_encode($tipoQuestao['descricao']).'</option>';
 										}
 									}
 								?>
@@ -104,13 +104,13 @@ include("func/adicionar.php");
                             <div>
                                 <div class="field-wrap">
                                     <span>  
-                                        <input type="text" class="campoForm small" name="alternativa_1" maxlength="250" size="80" required>
+                                        <input type="text" class="campoForm small" name="alternativa_1" maxlength="250" size="80">
                                         <label class="pad"><p>Texto da alternativa</p></label>  
                                     </span> 
                                 </div>	
                                 <div class="field-wrap right"> 
                                     <label><h3>Correta</h3></label>
-                                    <div><input type="radio" name="correta" id="correta_1" value="1" required><label for="correta_1"><span><span></span></span></label></div>
+                                    <div><input type="radio" name="correta" id="correta_1" value="1"><label for="correta_1"><span><span></span></span></label></div>
                                 </div>
                             </div>	 
                         </div>
@@ -144,11 +144,11 @@ include("func/adicionar.php");
 						</div>  
 						<div class="field-wrap true"> 
 							<label><h3>Verdadeira:</h3></label> 
-                            <div><input type="radio" id="verdadeira" name="correta"><label for="verdadeira"><span><span></span></span></label></div>
+                            <div><input type="radio" id="verdadeira" name="correta" value="1"><label for="verdadeira"><span><span></span></span></label></div>
 						</div> 
 						<div class="field-wrap false"> 
 							<label><h3>Falsa:</h3></label> 
-                            <div><input type="radio" id="falsa" name="correta"><label for="falsa"><span><span></span></span></label></div>
+                            <div><input type="radio" id="falsa" name="correta" value="0"><label for="falsa"><span><span></span></span></label></div>
 						</div>  
 					</div>
 					<br><br>

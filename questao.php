@@ -10,7 +10,7 @@ include("func/listar.php");
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="iso-8859-1">
+<meta charset="utf-8">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'> 
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
@@ -97,16 +97,16 @@ include("func/listar.php");
 			        <td data-title="">
                     	<?php if($_SESSION["tipoProfessor"]=="A"||$_SESSION["codProfessor"]==$area["codProfessor"]){ ?>
 						<a href="update.php?cq=<?=$area["codQuestao"]?>" class="edit"></a>
-						<a href="delete.php?cq=<?=$area["codQuestao"]?>" class="delete"></a>
+						<a href="func/delete.php?cq=<?=$area["codQuestao"]?>" class="delete"></a>
                         <?php }else{ ?>
                         <a href="view.php?cq=<?=$area["codQuestao"]?>" class="view"></a>
                         <?php } ?>
 			        </td>
-			        <td data-title=""><?=$area["textoQuestao"]?></td>
-			        <td data-title=""><?=$area["assunto"]?></td>
-			        <td data-title="" data-type=""><?=$area["tipoquestao"]?></td>
-			        <td data-title="" data-type=""><?=$area["nome"]?></td>
-			        <td data-title="" data-type=""><?=$area["dificuldade"]?></td>
+			        <td data-title=""><?=utf8_encode($area["textoQuestao"])?></td>
+			        <td data-title=""><?=utf8_encode($area["assunto"])?></td>
+			        <td data-title="" data-type=""><?=utf8_encode($area["tipoquestao"])?></td>
+			        <td data-title="" data-type=""><?=utf8_encode($area["nome"])?></td>
+			        <td data-title="" data-type=""><?=utf8_encode($area["dificuldade"])?></td>
 			        <td data-title="" data-type=""><?=($area["ativo"])?'<div class="ativo"></div>':'<div class="desativo"></div>'?>
 			        </td>
 			      </tr>

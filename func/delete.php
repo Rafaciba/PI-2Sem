@@ -1,12 +1,12 @@
 <?php
 
-include("config/database.php");
-include("config/session.php");
-include("config/func.php");
+include("../config/database.php");
+include("../config/session.php");
+include("../config/func.php");
 
 if (isset($_SESSION["showMenu"])&&$_SESSION["showMenu"]) { 
 	if(!isset($_SESSION['codProfessor'])&&!isset($_GET['cq'])){
-		header("Location: index.php"); exit;	
+		header("Location: ../index.php"); exit;	
 	}
 }
 
@@ -44,7 +44,7 @@ if (!$result) {$d=0;}
 //COMMIT TRANSACTION
 $transaction = odbc_exec($conn,"COMMIT TRANSACTION DELQ");
 
-header("Location: questao.php?s=$d");
+header("Location: ../questao.php?s=$d");
 exit;
 
 ?>

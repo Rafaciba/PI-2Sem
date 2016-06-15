@@ -2,6 +2,8 @@
 $codQuestao = preg_replace("/[^0-9]/", "", $_GET['cq']);
 
 if (isset($_POST['cadastrar'])){
+	//DEIXA OS DADOS NO FORMATO CORRETO PARA O BD
+	$_POST = array_map('utf8_decode', $_POST);
 	//BEGIN TRANSACTION
 	$transaction = odbc_exec($conn, "BEGIN TRANSACTION UPDTQ");
 	//IMAGEM

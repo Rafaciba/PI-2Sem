@@ -9,7 +9,7 @@ include("func/view.php");
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="utf-8">
 <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,500' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
@@ -30,7 +30,7 @@ include("func/view.php");
 				<form name="frmQuestao" id="frmQuestao" method="post" enctype="multipart/form-data">
                 	<div class="field-wrap">
 						  <span>
-						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao" disabled><?=$questao['textoQuestao']?></textarea>  
+						  		<textarea  class="campoForm" maxlength="300" name="textoQuestao" id="textoQuestao" disabled><?=utf8_encode($questao['textoQuestao'])?></textarea>  
 						  		<label class="enunciado" for="Enunciado">Enunciado</label> 
 						  </span> 	  
 					</div>					
@@ -43,9 +43,9 @@ include("func/view.php");
 									if(odbc_num_rows($resultAs)>0){
 										while($assunto = odbc_fetch_array($resultAs)){
 											if ($questao['codAssunto']==$assunto['codAssunto']) {
-												echo '<option value="'.$assunto['codAssunto'].'" selected>'.$assunto['descricao'].'</option>';
+												echo '<option value="'.$assunto['codAssunto'].'" selected>'.utf8_encode($assunto['descricao']).'</option>';
 											}else{
-												echo '<option value="'.$assunto['codAssunto'].'">'.$assunto['descricao'].'</option>';
+												echo '<option value="'.$assunto['codAssunto'].'">'.utf8_encode($assunto['descricao']).'</option>';
 											}
 										}
 									}
@@ -63,9 +63,9 @@ include("func/view.php");
 									if(odbc_num_rows($resultT)>0){
 										while($tipoQuestao = odbc_fetch_array($resultT)){
 											if ($questao['codTipoQuestao']==$tipoQuestao['codTipoQuestao']) {
-												echo '<option value="'.$tipoQuestao['codTipoQuestao'].'" selected>'.$tipoQuestao['descricao'].'</option>';
+												echo '<option value="'.$tipoQuestao['codTipoQuestao'].'" selected>'.utf8_encode($tipoQuestao['descricao']).'</option>';
 											}else{
-												echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.$tipoQuestao['descricao'].'</option>';
+												echo '<option value="'.$tipoQuestao['codTipoQuestao'].'">'.utf8_encode($tipoQuestao['descricao']).'</option>';
 											}
 										}
 									}
@@ -86,7 +86,7 @@ include("func/view.php");
 					</div>
 					<div class="field-wrap">
 						<span>							
-							<input class="campoForm" type="text" name="titImagem" maxlength="50" size="50" value="<?=$questao['tituloImagem']?>" disabled>
+							<input class="campoForm" type="text" name="titImagem" maxlength="50" size="50" value="<?=utf8_encode($questao['tituloImagem'])?>" disabled>
 							<label for="Titulo da Imagem">T&iacute;tulo da imagem:</label>
 						</span>	
 					</div>
@@ -114,13 +114,13 @@ include("func/view.php");
 								<div>
 									<div class="field-wrap">
 										<span>
-                                            <input type="text"  class="campoForm small" name="alternativa_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>" disabled>
+                                            <input type="text"  class="campoForm small" name="alternativa_<?=$j?>" maxlength="250" size="80" value="<?=utf8_encode($alternativa['textoAlternativa'])?>" disabled>
 											<label class="pad"><p>Texto da alternativa</p></label>  
 										</span> 
 									</div>	
 									<div class="field-wrap right"> 
 										<label><h3>Correta</h3></label>
-										<input type="checkbox" name="correta_<?=$j?>" value="1" class="checkbox" <?=($alternativa['correta']==1)?"checked":""?> disabled> 
+										<div><input type="radio" name="correta" id="correta_<?=$j?>" value="<?=$j?>" <?=($alternativa['correta']==1)?"checked":""?> disabled><label for="correta_<?=$j?>"><span><span></span></span></label></div> 
 									</div>
 								</div>	
                                 <?php } ?> 
@@ -132,7 +132,7 @@ include("func/view.php");
 						<div id="txtRows">
 							<div class="field-wrap">
 								<span>
-                                	<input type="text" class="campoForm" name="resposta_<?=$j?>" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>" disabled>
+                                	<input type="text" class="campoForm" name="resposta_<?=$j?>" maxlength="250" size="80" value="<?=utf8_encode($alternativa['textoAlternativa'])?>" disabled>
 									<label class="pad"><p>Texto da resposta</p></label>  
 								</span> 
 							</div> 
@@ -146,7 +146,7 @@ include("func/view.php");
                         <div>
                             <div class="field-wrap">
                                 <span>
-                                    <input type="text" class="campoForm small" name="respostaVF" maxlength="250" size="80" value="<?=$alternativa['textoAlternativa']?>" disabled>
+                                    <input type="text" class="campoForm small" name="respostaVF" maxlength="250" size="80" value="<?=utf8_encode($alternativa['textoAlternativa'])?>" disabled>
                                     <label class="pad"><p>Texto da resposta</p></label>  
                                 </span> 
                             </div>  
